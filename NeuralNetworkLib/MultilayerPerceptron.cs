@@ -8,6 +8,7 @@ namespace NeuralNetworkLib
 		private List<Neuron> _input;
 		private List<List<Neuron>> _hidden;
 		private List<Neuron> _output;
+		// Activation functions
 		private Func<double, double> _func;
 
 		private MultilayerPerceptron()
@@ -26,6 +27,7 @@ namespace NeuralNetworkLib
 			_func = func;
 		}
 
+		// Adding hidden layer with "count" neurons in it
 		public void AddLayer(int count)
 		{
 			var l = new List<Neuron>();
@@ -34,7 +36,8 @@ namespace NeuralNetworkLib
 			_hidden.Add(l);
 		}
 
-		public void Connect() // Only straight at this moment
+		// Set connections between neurons
+		public void Connect()
 		{
 			if (_hidden.Count == 0)
 				foreach (var n in _output)
@@ -56,6 +59,7 @@ namespace NeuralNetworkLib
 			}
 		}
 
+		// Process the input values list & get result values list
 		public List<double> Process(List<double> input)
 		{
 			var result = new List<double>();
