@@ -32,7 +32,7 @@ namespace CellsAI
 
 		readonly OpenSimplexNoise gen = new OpenSimplexNoise
 		{
-			Scale = 10,
+			Scale = 2,
 			Octaves = 5,
 			Persistance = 0.3,
 			Lacunarity = 3,

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NeuralNetworkLib
 {
-	public class MultilayerPerceptron
+	public class MultilayerPerceptron : NeuralNetwork
 	{
 		private List<Neuron> _input;
 		private List<List<Neuron>> _hidden;
@@ -60,7 +60,7 @@ namespace NeuralNetworkLib
 		}
 
 		// Process the input values list & get result values list
-		public List<double> Process(List<double> input)
+		public override List<double> Process(List<double> input)
 		{
 			var result = new List<double>();
 			for (int i = 0; i < input.Count; i++)

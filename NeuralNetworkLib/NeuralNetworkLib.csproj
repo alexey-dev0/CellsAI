@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="ActivationFunctions.cs" />
     <Compile Include="MultilayerPerceptron.cs" />
+    <Compile Include="NeuralNetwork.cs" />
     <Compile Include="Neuron.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

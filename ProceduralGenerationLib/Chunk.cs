@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace ProceduralGenerationLib
 {
@@ -26,13 +27,39 @@ namespace ProceduralGenerationLib
 
 		private void Generate()
 		{
-			var noiseHeightMap = _generator.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE, _y * CHUNK_SIZE));
+			var noiseHeightMap = smoothNoise();// _generator.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE, _y * CHUNK_SIZE));
 			var gen2 = new OpenSimplexNoise(_generator);
 			gen2.Scale *= 20;
 			var noiseTemperatureMap = gen2.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE, _y * CHUNK_SIZE));
 			for (int i = 0; i < CHUNK_SIZE; i++)
 				for (int j = 0; j < CHUNK_SIZE; j++)
-					_cellGrid[i, j] = new Cell(noiseHeightMap[i, j], noiseTemperatureMap[i, j]);
+					_cellGrid[i, j] = new Cell(GetValueNormalized(noiseHeightMap[i, j], noiseTemperatureMap[i, j]), 0.5);
+		}
+
+		private double[,] smoothNoise()
+		{
+			var result = new double[CHUNK_SIZE, CHUNK_SIZE];
+			var radius = 2;
+			for (int i = -radius; i <= radius; i++)
+				for (int j = -radius; j <= radius; j++)
+				{
+					var map = _generator.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE + i, _y * CHUNK_SIZE + j));
+					for (int x = 0; x < CHUNK_SIZE; x++)
+						for (int y = 0; y < CHUNK_SIZE; y++)
+							result[x, y] += map[x, y];
+				}
+			for (int x = 0; x < CHUNK_SIZE; x++)
+				for (int y = 0; y < CHUNK_SIZE; y++)
+					result[x, y] /= Math.Pow(radius * 2 + 1, 2);
+			return result;
+		}
+
+		private double GetValueNormalized(double mainNoise, double subNoise)
+		{
+			var value = mainNoise * subNoise * subNoise + subNoise - 0.3;
+			if (value <= 0.3) value = Math.Atan(value);
+			//else value += 0.5 * (1.0 - value);
+			return Math.Min(1.0, Math.Max(0.0, value));
 		}
 
 		public Texture2D GetTexture(GraphicsDevice graphics)

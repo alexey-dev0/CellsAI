@@ -116,7 +116,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Creatures\Brain.cs" />
+    <Compile Include="Creatures\Creature.cs" />
+    <Compile Include="Creatures\IEffector.cs" />
     <Compile Include="FpsComponent.cs" />
+    <Compile Include="Creatures\IReceptor.cs" />
     <Compile Include="MyGame.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

@@ -20,9 +20,9 @@ namespace ProceduralGenerationLib
 
 		private Color ColorFromHeight()
 		{
-			_height *= 8;
+			_height *= 12;
 			_height = (int)_height;
-			_height /= 8;
+			_height /= 12;
 			Color col;
 
 			var water = new double[] { 0.0, 0.3 };

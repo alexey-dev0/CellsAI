@@ -17,6 +17,7 @@ namespace CellsAI
 
 		protected override void LoadContent()
 		{
+			Game.Content.RootDirectory = "Assets";
 			_font = Game.Content.Load<SpriteFont>("Fonts/DefaultFont");
 
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
