@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
-namespace CellsAI
+namespace CellsAI.Views
 {
 	/// <summary>
 	/// Логика взаимодействия для MainWindow.xaml

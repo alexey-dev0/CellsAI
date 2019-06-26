@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Framework.WpfInterop;
 using System;
 
-namespace CellsAI
+namespace CellsAI.Game
 {
 	public class FpsComponent : WpfDrawableGameComponent
 	{
@@ -13,7 +13,9 @@ namespace CellsAI
 		private int _liveFrames;
 		private TimeSpan _timeElapsed;
 
-		public FpsComponent(WpfGame game) : base(game) { }
+		public FpsComponent(WpfGame game) : base(game)
+		{
+		}
 
 		protected override void LoadContent()
 		{

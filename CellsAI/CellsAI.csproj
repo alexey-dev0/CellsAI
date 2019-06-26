@@ -108,7 +108,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -116,13 +116,22 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Creatures\Brain.cs" />
-    <Compile Include="Creatures\Creature.cs" />
-    <Compile Include="Creatures\IEffector.cs" />
-    <Compile Include="FpsComponent.cs" />
-    <Compile Include="Creatures\IReceptor.cs" />
-    <Compile Include="MyGame.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Game\GameConstants.cs" />
+    <Compile Include="World\Cell.cs" />
+    <Compile Include="World\Chunk.cs" />
+    <Compile Include="Entities\Creatures\Brain.cs" />
+    <Compile Include="Entities\Creatures\Creature.cs" />
+    <Compile Include="Entities\Creatures\IEffector.cs" />
+    <Compile Include="Entities\Creatures\Receptors\StraightLook.cs" />
+    <Compile Include="Entities\Creatures\SimpleCreature.cs" />
+    <Compile Include="Entities\Drawable.cs" />
+    <Compile Include="Entities\Food.cs" />
+    <Compile Include="Game\FpsComponent.cs" />
+    <Compile Include="Entities\Creatures\IReceptor.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="World\Map.cs" />
+    <Compile Include="Game\MyGame.cs" />
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

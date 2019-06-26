@@ -1,4 +1,4 @@
-﻿namespace CellsAI.Creatures
+﻿namespace CellsAI.Entities.Creatures
 {
 	public interface IEffector
 	{

@@ -1,19 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace ProceduralGenerationLib
+namespace CellsAI.World
 {
 	public struct Cell
 	{
-		public static readonly int SIZE = 4;
-
 		// [0; 1]
 		private double _height;
-		private double _temperature;
 
-		public Cell(double height, double temperature)
+		public Cell(double height)
 		{
 			_height = height;
-			_temperature = temperature;
 		}
 
 		public Color Color => ColorFromHeight();
@@ -44,12 +40,7 @@ namespace ProceduralGenerationLib
 			else if (segment == ground) col = Color.Lerp(Color.YellowGreen, Color.DarkGreen, (float)_height);
 			else col = Color.Lerp(new Color(0x54, 0x3D, 0x21), Color.Snow, (float)_height);
 
-			var tempCol = Color.Lerp(Color.DodgerBlue, Color.OrangeRed, (float)_temperature);
-			byte R = (byte)(col.R * 0.5f + tempCol.R * 0.5f);
-			byte G = (byte)(col.G * 0.5f + tempCol.G * 0.5f);
-			byte B = (byte)(col.B * 0.5f + tempCol.B * 0.5f);
-
-			return new Color(R, G, B);
+			return col;
 		}
 	}
 }

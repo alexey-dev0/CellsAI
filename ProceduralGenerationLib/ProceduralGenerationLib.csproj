@@ -76,9 +76,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cell.cs" />
-    <Compile Include="Chunk.cs" />
-    <Compile Include="Map.cs" />
     <Compile Include="OpenSimplexNoise.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

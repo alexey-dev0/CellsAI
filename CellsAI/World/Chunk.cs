@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProceduralGenerationLib;
 using System;
 
-namespace ProceduralGenerationLib
+namespace CellsAI.World
 {
 	public class Chunk
 	{
@@ -33,7 +34,7 @@ namespace ProceduralGenerationLib
 			var noiseTemperatureMap = gen2.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE, _y * CHUNK_SIZE));
 			for (int i = 0; i < CHUNK_SIZE; i++)
 				for (int j = 0; j < CHUNK_SIZE; j++)
-					_cellGrid[i, j] = new Cell(GetValueNormalized(noiseHeightMap[i, j], noiseTemperatureMap[i, j]), 0.5);
+					_cellGrid[i, j] = new Cell(GetValueNormalized(noiseHeightMap[i, j], noiseTemperatureMap[i, j]));
 		}
 
 		private double[,] smoothNoise()

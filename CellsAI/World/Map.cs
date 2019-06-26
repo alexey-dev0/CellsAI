@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CellsAI.Game;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProceduralGenerationLib;
 using System;
 using System.Collections.Generic;
 
-namespace ProceduralGenerationLib
+namespace CellsAI.World
 {
 	public class Map
 	{
@@ -38,7 +40,7 @@ namespace ProceduralGenerationLib
 			var width = sprBatch.GraphicsDevice.Viewport.Width;
 			var height = sprBatch.GraphicsDevice.Viewport.Height;
 
-			var chunkSZ = Chunk.CHUNK_SIZE * Cell.SIZE;
+			var chunkSZ = Chunk.CHUNK_SIZE * GameConstants.CELL_SIZE;
 			var centerX = (int)(0.5 * (width - chunkSZ));
 			var centerY = (int)(0.5 * (height - chunkSZ));
 			var radius = 4;
@@ -52,7 +54,7 @@ namespace ProceduralGenerationLib
 						color: Color.White,
 						rotation: 0f,
 						origin: Vector2.Zero,
-						scale: Cell.SIZE,
+						scale: GameConstants.CELL_SIZE,
 						effects: SpriteEffects.None,
 						layerDepth: 0f);
 			sprBatch.End();

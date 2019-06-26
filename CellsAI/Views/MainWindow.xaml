@@ -3,24 +3,23 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:local="clr-namespace:CellsAI"
-		x:Class="CellsAI.MainWindow"
+		xmlns:local="clr-namespace:CellsAI.Views"
+		xmlns:game="clr-namespace:CellsAI.Game"
+		x:Class="CellsAI.Views.MainWindow"
 		mc:Ignorable="d"
-		Title="MainWindow" 
-		Height="450" 
+		Title="MainWindow"
+		Height="450"
 		Width="800">
 	<Grid x:Name="MyGrid" Margin="5">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="0.7*"/>
-			<ColumnDefinition Width="0.3*"/>
+			<ColumnDefinition Width="0.7*" />
+			<ColumnDefinition Width="0.3*" />
 		</Grid.ColumnDefinitions>
 
-		<local:MyGame x:Name="GameMain" Grid.Column="0"/>
+		<game:MyGame x:Name="GameMain" Grid.Column="0" />
 
 		<StackPanel Grid.Column="1">
 			<Button x:Name="Reset" Height="40" Margin="20" Click="Reset_Click">Reset</Button>
 		</StackPanel>
-
-		
 	</Grid>
 </Window>
