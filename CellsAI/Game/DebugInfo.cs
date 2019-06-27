@@ -5,22 +5,24 @@ using System;
 
 namespace CellsAI.Game
 {
-	public class FpsComponent : WpfDrawableGameComponent
+	public class DebugInfo : WpfDrawableGameComponent
 	{
 		private SpriteBatch _spriteBatch;
-		private SpriteFont _font;
 		private int _frames;
 		private int _liveFrames;
 		private TimeSpan _timeElapsed;
 
-		public FpsComponent(WpfGame game) : base(game)
+		public static SpriteFont DefaultFont;
+		public static string DebugMessage { get; set; } = "";
+
+		public DebugInfo(WpfGame game) : base(game)
 		{
 		}
 
 		protected override void LoadContent()
 		{
 			Game.Content.RootDirectory = "Assets";
-			_font = Game.Content.Load<SpriteFont>("Fonts/DefaultFont");
+			DefaultFont = Game.Content.Load<SpriteFont>("Fonts/DefaultFont");
 
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 		}
@@ -40,7 +42,10 @@ namespace CellsAI.Game
 		{
 			_liveFrames++;
 			_spriteBatch.Begin();
-			_spriteBatch.DrawString(_font, $"FPS: {_frames}", new Vector2(5), Color.Black);
+			DebugMessage += $"FPS: {_frames}\n";
+			_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(6), Color.Black);
+			_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(5), Color.OrangeRed);
+			DebugMessage = "";
 			_spriteBatch.End();
 		}
 	}

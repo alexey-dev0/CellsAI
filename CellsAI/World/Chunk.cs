@@ -2,14 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using ProceduralGenerationLib;
 using System;
+using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.World
 {
 	public class Chunk
 	{
-		public static readonly int CHUNK_SIZE = 16;
-		public static int K = 1;
-
 		private readonly OpenSimplexNoise _generator;
 		private readonly int _x;
 		private readonly int _y;
@@ -28,13 +26,13 @@ namespace CellsAI.World
 
 		private void Generate()
 		{
-			var noiseHeightMap = smoothNoise();// _generator.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE, _y * CHUNK_SIZE));
+			var noiseHeightMap = smoothNoise();
 			var gen2 = new OpenSimplexNoise(_generator);
 			gen2.Scale *= 20;
 			var noiseTemperatureMap = gen2.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE, _y * CHUNK_SIZE));
 			for (int i = 0; i < CHUNK_SIZE; i++)
 				for (int j = 0; j < CHUNK_SIZE; j++)
-					_cellGrid[i, j] = new Cell(GetValueNormalized(noiseHeightMap[i, j], noiseTemperatureMap[i, j]));
+					_cellGrid[i, j] = new Cell(this, GetValueNormalized(noiseHeightMap[i, j], noiseTemperatureMap[i, j]));
 		}
 
 		private double[,] smoothNoise()
@@ -44,7 +42,8 @@ namespace CellsAI.World
 			for (int i = -radius; i <= radius; i++)
 				for (int j = -radius; j <= radius; j++)
 				{
-					var map = _generator.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE + i, _y * CHUNK_SIZE + j));
+					var map = _generator.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, 
+						new Vector2(_x * CHUNK_SIZE + i, _y * CHUNK_SIZE + j));
 					for (int x = 0; x < CHUNK_SIZE; x++)
 						for (int y = 0; y < CHUNK_SIZE; y++)
 							result[x, y] += map[x, y];
@@ -73,6 +72,14 @@ namespace CellsAI.World
 					data[i * CHUNK_SIZE + j] = _cellGrid[i, j].Color;
 			_texture.SetData(data);
 			return _texture;
+		}
+
+		public Cell this[int x, int y]
+		{
+			get
+			{
+				return _cellGrid[x, y];
+			}
 		}
 
 		public void Dispose()

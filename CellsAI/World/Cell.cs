@@ -4,11 +4,14 @@ namespace CellsAI.World
 {
 	public struct Cell
 	{
-		// [0; 1]
+		public Chunk Parent { get; }
+
+		// [0..1]
 		private double _height;
 
-		public Cell(double height)
+		public Cell(Chunk parent, double height)
 		{
+			Parent = parent;
 			_height = height;
 		}
 

@@ -8,6 +8,7 @@ namespace NeuralNetworkLib
 		private List<Neuron> _input;
 		private List<List<Neuron>> _hidden;
 		private List<Neuron> _output;
+
 		// Activation functions
 		private Func<double, double> _func;
 

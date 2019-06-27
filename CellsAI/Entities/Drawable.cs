@@ -18,7 +18,7 @@ namespace CellsAI.Entities
 
 		protected static Texture2D ErrorTexture(GraphicsDevice graphics)
 		{
-			var size = GameConstants.CELL_SIZE;
+			var size = GameParameters.CELL_SIZE;
 			var result = new Texture2D(graphics, size, size);
 			var data = new Color[size * size];
 			for (int i = 0; i < size * size; i++)

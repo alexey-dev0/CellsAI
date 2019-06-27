@@ -7,6 +7,7 @@ using MonoGame.Framework.WpfInterop;
 using MonoGame.Framework.WpfInterop.Input;
 using ProceduralGenerationLib;
 using System.Collections.Generic;
+using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.Game
 {
@@ -15,6 +16,7 @@ namespace CellsAI.Game
 		private IGraphicsDeviceService _graphics;
 		private SpriteBatch _sprBatch;
 		private WpfKeyboard _keyboard;
+		private WpfMouse _mouse;
 		private List<Creature> _creatures;
 
 		private static Map _world;
@@ -40,10 +42,11 @@ namespace CellsAI.Game
 
 		protected override void Initialize()
 		{
-			Components.Add(new FpsComponent(this));
+			Components.Add(new DebugInfo(this));
 			_graphics = new WpfGraphicsDeviceService(this);
 			_sprBatch = new SpriteBatch(_graphics.GraphicsDevice);
 			_keyboard = new WpfKeyboard(this);
+			_mouse = new WpfMouse(this);
 			_creatures = new List<Creature>();
 
 			base.Initialize();
@@ -61,7 +64,7 @@ namespace CellsAI.Game
 		protected override void LoadContent()
 		{
 			for (int i = 0; i < 10; i++)
-				_creatures.Add(new SimpleCreature(_sprBatch, i * GameConstants.CELL_SIZE, i * GameConstants.CELL_SIZE));
+				_creatures.Add(new SimpleCreature(_sprBatch, i * CELL_SIZE, i * CELL_SIZE));
 			base.LoadContent();
 		}
 
@@ -72,6 +75,7 @@ namespace CellsAI.Game
 			if (keyboardState.IsKeyDown(Keys.S)) _y--;
 			if (keyboardState.IsKeyDown(Keys.A)) _x++;
 			if (keyboardState.IsKeyDown(Keys.D)) _x--;
+			SCALE = 1 + _mouse.GetState().ScrollWheelValue / 1000.0f;
 
 			foreach (var creature in _creatures)
 				creature.Update();
@@ -81,14 +85,14 @@ namespace CellsAI.Game
 
 		protected override void Draw(GameTime time)
 		{
-			_graphics.GraphicsDevice.Clear(Color.AliceBlue);
+			_graphics.GraphicsDevice.Clear(Color.Purple);
 
-			World.ViewX = _x / 4; // Chunk.CHUNK_SIZE;
-			World.ViewY = _y / 4; // Chunk.CHUNK_SIZE;
+			World.ViewX = _x;// CHUNK_SIZE;
+			World.ViewY = _y;// CHUNK_SIZE;
 			World.Draw(_sprBatch);
 
-			foreach (var creature in _creatures)
-				creature.Draw(_sprBatch, creature.X * GameConstants.CELL_SIZE, creature.Y * GameConstants.CELL_SIZE);
+			//foreach (var creature in _creatures)
+				//creature.Draw(_sprBatch, creature.X * CELL_SIZE, creature.Y * CELL_SIZE);
 
 			base.Draw(time);
 		}

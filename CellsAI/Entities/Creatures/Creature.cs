@@ -12,7 +12,6 @@ namespace CellsAI.Entities.Creatures
 		protected List<IReceptor> _receptors;
 		protected List<IEffector> _effectors;
 
-		// Consider how to create network
 		public Creature(SpriteBatch sprBatch)
 		{
 			_receptors = new List<IReceptor>();
@@ -23,7 +22,7 @@ namespace CellsAI.Entities.Creatures
 
 		private void CreateTexture()
 		{
-			var diam = GameConstants.CELL_SIZE;
+			var diam = GameParameters.CELL_SIZE;
 			_texture = new Texture2D(_sprBatch.GraphicsDevice, diam, diam);
 			var data = new Color[diam * diam];
 

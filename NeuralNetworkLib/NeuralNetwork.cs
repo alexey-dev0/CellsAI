@@ -6,7 +6,7 @@ namespace NeuralNetworkLib
 	{
 		public abstract List<double> Process(List<double> input);
 
-		public List<double> Process(double[] input) 
+		public List<double> Process(double[] input)
 			=> Process(new List<double>(input));
 	}
 }

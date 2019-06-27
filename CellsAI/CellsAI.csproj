@@ -116,7 +116,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Game\GameConstants.cs" />
+    <Compile Include="Game\GameParameters.cs" />
     <Compile Include="World\Cell.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="Entities\Creatures\Brain.cs" />
@@ -126,7 +126,7 @@
     <Compile Include="Entities\Creatures\SimpleCreature.cs" />
     <Compile Include="Entities\Drawable.cs" />
     <Compile Include="Entities\Food.cs" />
-    <Compile Include="Game\FpsComponent.cs" />
+    <Compile Include="Game\DebugInfo.cs" />
     <Compile Include="Entities\Creatures\IReceptor.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="World\Map.cs" />
