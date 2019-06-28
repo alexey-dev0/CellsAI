@@ -298,8 +298,8 @@ namespace ProceduralGenerationLib
 			var octaveOffsets = new Vector2[Octaves];
 			for (int i = 0; i < Octaves; i++)
 			{
-				float offsetX = r.Next(-100000, 100000) - offset.X;
-				float offsetY = r.Next(-100000, 100000) - offset.Y;
+				float offsetX = r.Next(-100000, 100000) + offset.X;
+				float offsetY = r.Next(-100000, 100000) + offset.Y;
 				octaveOffsets[i] = new Vector2(offsetX, offsetY);
 				maxPossibleHeight += Math.Pow(Persistance, i);
 			}

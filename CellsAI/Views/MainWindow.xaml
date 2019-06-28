@@ -18,7 +18,7 @@
 
 		<game:MyGame x:Name="GameMain" Grid.Column="0" />
 
-		<StackPanel Grid.Column="1">
+		<StackPanel x:Name="StackPnl" Grid.Column="1">
 			<Button x:Name="Reset" Height="40" Margin="20" Click="Reset_Click">Reset</Button>
 		</StackPanel>
 	</Grid>

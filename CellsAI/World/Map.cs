@@ -32,33 +32,10 @@ namespace CellsAI.World
 		}
 
 		private void AddChunk(int x, int y)
-			=> _chunks.Add(new Vector2(x, y), new Chunk(_generator, x, y));
+			=> AddChunk(new Vector2(x, y));
 
-		public void DrawTODO(SpriteBatch sprBatch)
-		{
-			sprBatch.Begin(samplerState: SamplerState.PointClamp);
-			var width = sprBatch.GraphicsDevice.Viewport.Width;
-			var height = sprBatch.GraphicsDevice.Viewport.Height;
-
-			var chunkSZ = CHUNK_SIZE * CELL_SIZE;
-			var centerX = (int)(0.5 * (width - chunkSZ));
-			var centerY = (int)(0.5 * (height - chunkSZ));
-			var radius = 4;
-
-			for (int i = -radius; i <= radius; i++)
-				for (int j = -radius; j <= radius; j++)
-					sprBatch.Draw(
-						texture: GetChunk(ViewX + i, ViewY + j).GetTexture(sprBatch.GraphicsDevice),
-						position: new Vector2(centerX - i * chunkSZ, centerY - j * chunkSZ),
-						sourceRectangle: null,
-						color: Color.White,
-						rotation: 0f,
-						origin: Vector2.Zero,
-						scale: CELL_SIZE,
-						effects: SpriteEffects.None,
-						layerDepth: 0f);
-			sprBatch.End();
-		}
+		private void AddChunk(Vector2 position)
+			=> _chunks.Add(position, new Chunk(_generator, position));
 
 		public void Draw(SpriteBatch sprBatch)
 		{
@@ -66,23 +43,21 @@ namespace CellsAI.World
 			var width = sprBatch.GraphicsDevice.Viewport.Width;
 			var height = sprBatch.GraphicsDevice.Viewport.Height;
 
-			var chunkHCount = Math.Ceiling(width * ZOOM_FACTOR) + 1;
-			var chunkVCount = Math.Ceiling(height * ZOOM_FACTOR) + 1;
+			int chunkHCount = (int)Math.Ceiling(width * ZOOM_FACTOR) + 1;
+			int chunkVCount = (int)Math.Ceiling(height * ZOOM_FACTOR) + 1;
 
 			var LUCorner = new Vector2(ViewX - 0.5f * width, ViewY - 0.5f * height);
-			var initChunkPoint = new Vector2(LUCorner.X / CHUNK_FULL_SIZE, LUCorner.Y / CHUNK_FULL_SIZE);
-			var initDrawPoint = new Vector2(LUCorner.X - (int)initChunkPoint.X * CHUNK_FULL_SIZE, LUCorner.Y - (int)initChunkPoint.Y * CHUNK_FULL_SIZE);
+			var initChunkPoint = new Vector2((float)Math.Floor(LUCorner.X * ZOOM_FACTOR), (float)Math.Floor(LUCorner.Y * ZOOM_FACTOR));
+			var initDrawPoint = new Vector2(-LUCorner.X + (int)initChunkPoint.X / ZOOM_FACTOR, -LUCorner.Y + (int)initChunkPoint.Y / ZOOM_FACTOR);
 
 			Game.DebugInfo.DebugMessage += $"Position: {new Vector2(ViewX, ViewY)}\n";
-			Game.DebugInfo.DebugMessage += $"LUCorner: {LUCorner}\n";
-			Game.DebugInfo.DebugMessage += $"DrawPoint: {initDrawPoint}\n";
 
 			for (int x = 0; x < chunkHCount; x++)
 				for (int y = 0; y < chunkVCount; y++)
 				{
-					var chunkPos = new Vector2(initChunkPoint.X - x, initChunkPoint.Y - y);
+					var chunkPos = new Vector2(initChunkPoint.X + x, initChunkPoint.Y + y);
 					sprBatch.Draw(
-						texture: GetChunk((int)chunkPos.X, (int)chunkPos.Y).GetTexture(sprBatch.GraphicsDevice),
+						texture: GetChunk(chunkPos).GetTexture(sprBatch.GraphicsDevice),
 						position: initDrawPoint + new Vector2(x * CHUNK_FULL_SIZE * SCALE, y * CHUNK_FULL_SIZE * SCALE),
 						sourceRectangle: null,
 						color: Color.White,
@@ -105,7 +80,13 @@ namespace CellsAI.World
 		private Chunk GetChunk(int x, int y)
 		{
 			var position = new Vector2(x, y);
-			if (!_chunks.ContainsKey(position)) AddChunk(x, y);
+			return GetChunk(position);
+		}
+
+		private Chunk GetChunk(Vector2 position)
+		{
+			position = new Vector2((int)Math.Floor(position.X), (int)Math.Floor(position.Y));
+			if (!_chunks.ContainsKey(position)) AddChunk(position);
 			return _chunks[position];
 		}
 

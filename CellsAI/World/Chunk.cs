@@ -24,21 +24,25 @@ namespace CellsAI.World
 			Generate();
 		}
 
+		public Chunk(OpenSimplexNoise generator, Vector2 position) 
+			: this(generator, (int)position.X, (int)position.Y)
+		{ }
+
 		private void Generate()
 		{
 			var noiseHeightMap = smoothNoise();
-			var gen2 = new OpenSimplexNoise(_generator);
-			gen2.Scale *= 20;
-			var noiseTemperatureMap = gen2.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE, _y * CHUNK_SIZE));
+			//var gen2 = new OpenSimplexNoise(_generator);
+			//gen2.Scale *= 10;
+			//var noiseTemperatureMap = gen2.GetValueMap(CHUNK_SIZE, CHUNK_SIZE, new Vector2(_x * CHUNK_SIZE, _y * CHUNK_SIZE));
 			for (int i = 0; i < CHUNK_SIZE; i++)
 				for (int j = 0; j < CHUNK_SIZE; j++)
-					_cellGrid[i, j] = new Cell(this, GetValueNormalized(noiseHeightMap[i, j], noiseTemperatureMap[i, j]));
+					_cellGrid[i, j] = new Cell(this, noiseHeightMap[i, j]);//GetValueNormalized(noiseHeightMap[i, j], noiseTemperatureMap[i, j]));
 		}
 
 		private double[,] smoothNoise()
 		{
 			var result = new double[CHUNK_SIZE, CHUNK_SIZE];
-			var radius = 2;
+			var radius = 1;
 			for (int i = -radius; i <= radius; i++)
 				for (int j = -radius; j <= radius; j++)
 				{
@@ -56,7 +60,8 @@ namespace CellsAI.World
 
 		private double GetValueNormalized(double mainNoise, double subNoise)
 		{
-			var value = mainNoise * subNoise * subNoise + subNoise - 0.3;
+			//var value = mainNoise * subNoise * subNoise + subNoise - 0.3;
+			var value = mainNoise * 0.1 + subNoise * 0.9 - 0.1;
 			if (value <= 0.3) value = Math.Atan(value);
 			//else value += 0.5 * (1.0 - value);
 			return Math.Min(1.0, Math.Max(0.0, value));
