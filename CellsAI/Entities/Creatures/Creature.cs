@@ -43,7 +43,7 @@ namespace CellsAI.Entities.Creatures
 			_texture.SetData(data);
 		}
 
-		public void Update()
+		public override void Update()
 		{
 			foreach (var receptor in _receptors)
 				receptor.Receive();

@@ -54,8 +54,11 @@ namespace NeuralNetworkLib
 
 		public Neuron(NeuronType type = NeuronType.Hidden)
 		{
-			if (type != NeuronType.Input) _parents = new List<Neuron>();
-			if (type != NeuronType.Input) _weights = new List<double>();
+			if (type != NeuronType.Input)
+			{
+				_parents = new List<Neuron>();
+				_weights = new List<double>();
+			}
 			if (type != NeuronType.Output) _children = new List<Neuron>();
 			_type = type;
 			_rand = new Random();

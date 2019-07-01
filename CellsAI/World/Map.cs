@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CellsAI.Entities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProceduralGenerationLib;
 using System;
@@ -14,6 +15,7 @@ namespace CellsAI.World
 
 		private readonly OpenSimplexNoise _generator;
 		private readonly Dictionary<Vector2, Chunk> _chunks;
+		private readonly List<Entity> _entities;
 
 		public Map(int seed)
 		{
@@ -27,9 +29,13 @@ namespace CellsAI.World
 			_chunks = new Dictionary<Vector2, Chunk>();
 		}
 
-		public Map() : this((int)DateTime.Now.Ticks)
+		public void Update()
 		{
+			foreach (var entity in _entities)
+				entity.Update();
 		}
+
+		public Map() : this((int)DateTime.Now.Ticks) { }
 
 		private void AddChunk(int x, int y)
 			=> AddChunk(new Vector2(x, y));
@@ -43,12 +49,12 @@ namespace CellsAI.World
 			var width = sprBatch.GraphicsDevice.Viewport.Width;
 			var height = sprBatch.GraphicsDevice.Viewport.Height;
 
-			int chunkHCount = (int)Math.Ceiling(width * ZOOM_FACTOR) + 1;
-			int chunkVCount = (int)Math.Ceiling(height * ZOOM_FACTOR) + 1;
+			int chunkHCount = (int)Math.Ceiling(width / ZOOM_FACTOR) + 1;
+			int chunkVCount = (int)Math.Ceiling(height / ZOOM_FACTOR) + 1;
 
 			var LUCorner = new Vector2(ViewX - 0.5f * width, ViewY - 0.5f * height);
-			var initChunkPoint = new Vector2((float)Math.Floor(LUCorner.X * ZOOM_FACTOR), (float)Math.Floor(LUCorner.Y * ZOOM_FACTOR));
-			var initDrawPoint = new Vector2(-LUCorner.X + (int)initChunkPoint.X / ZOOM_FACTOR, -LUCorner.Y + (int)initChunkPoint.Y / ZOOM_FACTOR);
+			var initChunkPoint = new Vector2((float)Math.Floor(LUCorner.X / ZOOM_FACTOR), (float)Math.Floor(LUCorner.Y / ZOOM_FACTOR));
+			var initDrawPoint = new Vector2(-LUCorner.X + (int)initChunkPoint.X * ZOOM_FACTOR, -LUCorner.Y + (int)initChunkPoint.Y * ZOOM_FACTOR);
 
 			Game.DebugInfo.DebugMessage += $"Position: {new Vector2(ViewX, ViewY)}\n";
 
@@ -58,7 +64,7 @@ namespace CellsAI.World
 					var chunkPos = new Vector2(initChunkPoint.X + x, initChunkPoint.Y + y);
 					sprBatch.Draw(
 						texture: GetChunk(chunkPos).GetTexture(sprBatch.GraphicsDevice),
-						position: initDrawPoint + new Vector2(x * CHUNK_FULL_SIZE * SCALE, y * CHUNK_FULL_SIZE * SCALE),
+						position: initDrawPoint + new Vector2(x * ZOOM_FACTOR, y * ZOOM_FACTOR),
 						sourceRectangle: null,
 						color: Color.White,
 						rotation: 0f,
@@ -66,11 +72,6 @@ namespace CellsAI.World
 						scale: new Vector2(CELL_SIZE * SCALE),
 						effects: SpriteEffects.None,
 						layerDepth: 0f);
-					//sprBatch.DrawString(
-					//	Game.DebugInfo.DefaultFont,
-					//	$"{(int)chunkPos.X}, {(int)chunkPos.Y}",
-					//	initDrawPoint + new Vector2(x * CHUNK_FULL_SIZE * SCALE, y * CHUNK_FULL_SIZE * SCALE),
-					//	Color.Black);
 				}
 
 			sprBatch.End();
@@ -98,6 +99,11 @@ namespace CellsAI.World
 				int chunkY = y / CHUNK_SIZE;
 				return GetChunk(chunkX, chunkY)[x % CHUNK_SIZE, y % CHUNK_SIZE];
 			}
+		}
+
+		public void AddCreatures()
+		{
+
 		}
 
 		public void Dispose()

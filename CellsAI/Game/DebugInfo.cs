@@ -5,7 +5,7 @@ using System;
 
 namespace CellsAI.Game
 {
-	public class DebugInfo : WpfDrawableGameComponent
+	public class DebugInfo : WpfDrawableGameComponent, IDisposable
 	{
 		private SpriteBatch _spriteBatch;
 		private int _frames;
@@ -47,6 +47,11 @@ namespace CellsAI.Game
 			_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(5), Color.OrangeRed);
 			DebugMessage = "";
 			_spriteBatch.End();
+		}
+
+		public void Dispose()
+		{
+			if (!_spriteBatch.IsDisposed) _spriteBatch.Dispose();
 		}
 	}
 }

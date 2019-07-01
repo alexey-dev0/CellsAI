@@ -10,6 +10,7 @@ namespace CellsAI.Views
 	public partial class MainWindow : Window
 	{
 		public static Dictionary<string, Slider> Sliders = new Dictionary<string, Slider>();
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -48,7 +49,5 @@ namespace CellsAI.Views
 		}
 
 		private static Dictionary<Slider, TextBox> _sliderBox = new Dictionary<Slider, TextBox>();
-
-
 	}
 }

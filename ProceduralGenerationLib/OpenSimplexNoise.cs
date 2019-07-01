@@ -71,7 +71,8 @@ namespace ProceduralGenerationLib
 					}
 					previous = current;
 				}
-				current.Next = new Contribution2(p2D[i + 1], p2D[i + 2], p2D[i + 3]);
+				if (current != null)
+					current.Next = new Contribution2(p2D[i + 1], p2D[i + 2], p2D[i + 3]);
 			}
 
 			lookup2D = new Contribution2[64];

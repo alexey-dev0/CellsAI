@@ -31,10 +31,7 @@ namespace CellsAI.Game
 				return _world;
 			}
 
-			set
-			{
-				_world = value;
-			}
+			set { _world = value; }
 		}
 
 		public static int Seed { get; set; }
@@ -95,12 +92,9 @@ namespace CellsAI.Game
 		{
 			_graphics.GraphicsDevice.Clear(Color.Purple);
 
-			World.ViewX = _x;// CHUNK_SIZE;
-			World.ViewY = _y;// CHUNK_SIZE;
+			World.ViewX = _x;
+			World.ViewY = _y;
 			World.Draw(_sprBatch);
-
-			//foreach (var creature in _creatures)
-				//creature.Draw(_sprBatch, creature.X * CELL_SIZE, creature.Y * CELL_SIZE);
 
 			base.Draw(time);
 		}
