@@ -8,18 +8,13 @@ namespace CellsAI.Entities
 	{
 		protected Texture2D _texture;
 
-		public void Draw(SpriteBatch sprBatch, int drawX, int drawY)
-		{
-			sprBatch.Begin(samplerState: SamplerState.PointClamp);
-			sprBatch.Draw(_texture ?? ErrorTexture(sprBatch.GraphicsDevice),
-				new Vector2(drawX + X, drawY + Y), Color.White);
-			sprBatch.End();
-		}
+		public Texture2D GetTexture()
+			=> _texture ?? ErrorTexture();
 
-		protected static Texture2D ErrorTexture(GraphicsDevice graphics)
+		protected static Texture2D ErrorTexture()
 		{
 			var size = GameParameters.CELL_SIZE;
-			var result = new Texture2D(graphics, size, size);
+			var result = new Texture2D(MyGame.SprBatch.GraphicsDevice, size, size);
 			var data = new Color[size * size];
 			for (int i = 0; i < size * size; i++)
 				data[i] = i % 2 == 0 ? Color.Purple : Color.Black;

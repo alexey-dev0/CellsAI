@@ -1,5 +1,4 @@
-﻿using CellsAI.Entities.Creatures;
-using CellsAI.Views;
+﻿using CellsAI.Views;
 using CellsAI.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,7 +6,6 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Framework.WpfInterop;
 using MonoGame.Framework.WpfInterop.Input;
 using ProceduralGenerationLib;
-using System.Collections.Generic;
 using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.Game
@@ -15,10 +13,9 @@ namespace CellsAI.Game
 	public class MyGame : WpfGame
 	{
 		private IGraphicsDeviceService _graphics;
-		private SpriteBatch _sprBatch;
+		public static SpriteBatch SprBatch;
 		private WpfKeyboard _keyboard;
 		private WpfMouse _mouse;
-		private List<Creature> _creatures;
 
 		private static Map _world;
 		public MainWindow Win;
@@ -43,16 +40,17 @@ namespace CellsAI.Game
 		{
 			Components.Add(new DebugInfo(this));
 			_graphics = new WpfGraphicsDeviceService(this);
-			_sprBatch = new SpriteBatch(_graphics.GraphicsDevice);
+			SprBatch = new SpriteBatch(_graphics.GraphicsDevice);
 			_keyboard = new WpfKeyboard(this);
 			_mouse = new WpfMouse(this);
-			_creatures = new List<Creature>();
 
 			Win.AddSlider("Scale", 1, 100, 20);
 			Win.AddSlider("Octaves", 1, 8, 4);
 			Win.AddSlider("Persistance", 0.1, 2.0, 0.3);
 			Win.AddSlider("Lacunarity", 1, 10, 3);
 			Win.AddSlider("NoiseHeight", 0, 2, 1);
+
+			Reset();
 
 			base.Initialize();
 		}
@@ -68,22 +66,22 @@ namespace CellsAI.Game
 
 		protected override void LoadContent()
 		{
-			for (int i = 0; i < 10; i++)
-				_creatures.Add(new SimpleCreature(_sprBatch, i * CELL_SIZE, i * CELL_SIZE));
+			World.AddCreatures(10);
 			base.LoadContent();
 		}
 
 		protected override void Update(GameTime time)
 		{
 			var keyboardState = _keyboard.GetState();
-			if (keyboardState.IsKeyDown(Keys.W)) _y--;
-			if (keyboardState.IsKeyDown(Keys.S)) _y++;
-			if (keyboardState.IsKeyDown(Keys.A)) _x--;
-			if (keyboardState.IsKeyDown(Keys.D)) _x++;
+			int velocity;
+			velocity = keyboardState.IsKeyDown(Keys.LeftShift) ? 10 : 1;
+			if (keyboardState.IsKeyDown(Keys.W)) _y -= velocity;
+			if (keyboardState.IsKeyDown(Keys.S)) _y += velocity;
+			if (keyboardState.IsKeyDown(Keys.A)) _x -= velocity;
+			if (keyboardState.IsKeyDown(Keys.D)) _x += velocity;
 			SCALE = 1 + _mouse.GetState().ScrollWheelValue / 1000.0f;
 
-			foreach (var creature in _creatures)
-				creature.Update();
+			World.Update();
 
 			base.Update(time);
 		}
@@ -94,7 +92,7 @@ namespace CellsAI.Game
 
 			World.ViewX = _x;
 			World.ViewY = _y;
-			World.Draw(_sprBatch);
+			World.Draw();
 
 			base.Draw(time);
 		}

@@ -1,8 +1,10 @@
-﻿namespace CellsAI.Entities.Creatures
+﻿using System.Collections.Generic;
+
+namespace CellsAI.Entities.Creatures
 {
 	public interface IReceptor
 	{
-		double Value { get; }
+		List<double> Values { get; }
 
 		void Receive();
 	}

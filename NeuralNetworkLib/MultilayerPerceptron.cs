@@ -5,27 +5,18 @@ namespace NeuralNetworkLib
 {
 	public class MultilayerPerceptron : NeuralNetwork
 	{
-		private List<Neuron> _input;
 		private List<List<Neuron>> _hidden;
-		private List<Neuron> _output;
-
 		// Activation functions
 		private Func<double, double> _func;
 
-		private MultilayerPerceptron()
+		public MultilayerPerceptron(int inputCount, int outputCount, Func<double, double> func) 
+			: base(inputCount, outputCount)
 		{
-			_input = new List<Neuron>();
 			_hidden = new List<List<Neuron>>();
-			_output = new List<Neuron>();
-		}
-
-		public MultilayerPerceptron(int inputs, int outputs, Func<double, double> func) : this()
-		{
-			while (inputs-- > 0)
-				_input.Add(new Neuron(Neuron.NeuronType.Input));
-			while (outputs-- > 0)
-				_output.Add(new Neuron(Neuron.NeuronType.Output, func));
 			_func = func;
+			AddLayer(8);
+			AddLayer(6);
+			Connect();
 		}
 
 		// Adding hidden layer with "count" neurons in it

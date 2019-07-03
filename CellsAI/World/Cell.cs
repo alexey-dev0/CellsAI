@@ -1,28 +1,63 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CellsAI.Entities;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace CellsAI.World
 {
-	public struct Cell
+	public class Cell
 	{
+		public enum CellType
+		{
+			Water,
+			Sand,
+			Ground,
+			Mountains
+		}
+
 		public Chunk Parent { get; }
 
+		public List<Entity> Content;
+
+		public void Enter(Entity entity)
+		{
+			if (!Content.Contains(entity))
+			{
+				Content.Add(entity);
+				if (entity is Drawable) Parent.Enter(entity as Drawable);
+			}
+		}
+
+		public void Leave(Entity entity)
+		{
+			if (Content.Contains(entity))
+			{
+				Content.Remove(entity);
+				if (entity is Drawable) Parent.Leave(entity as Drawable);
+			}
+		}
+
 		// [0..1]
-		private double _height;
+		public double _height;
 
 		public Cell(Chunk parent, double height)
 		{
 			Parent = parent;
 			_height = height;
+			//MyType = CellType.Water;
+			//Color = Color.Red;
+			Content = new List<Entity>();
+			ColorFromHeight();
 		}
 
-		public Color Color => ColorFromHeight();
+		public Color Color;
 
-		private Color ColorFromHeight()
+		public CellType MyType;
+
+		private void ColorFromHeight()
 		{
 			_height *= 12;
 			_height = (int)_height;
 			_height /= 12;
-			Color col;
 
 			var water = new double[] { 0.0, 0.3 };
 			var sand = new double[] { 0.3, 0.4 };
@@ -31,19 +66,37 @@ namespace CellsAI.World
 
 			double[] segment;
 
-			if (_height < water[1]) segment = water;
-			else if (_height < sand[1]) segment = sand;
-			else if (_height < ground[1]) segment = ground;
-			else segment = stone;
+			if (_height < water[1])
+			{
+				segment = water;
+				MyType = CellType.Water;
+			}
+			else if (_height < sand[1])
+			{
+				segment = sand;
+				MyType = CellType.Sand;
+			}
+			else if (_height < ground[1])
+			{
+				segment = ground;
+				MyType = CellType.Ground;
+			}
+			else
+			{
+				segment = stone;
+				MyType = CellType.Mountains;
+			}
 
 			_height = 1.0 / (segment[1] - segment[0]) * (_height - segment[0]);
 
-			if (segment == water) col = Color.Lerp(Color.DarkBlue, Color.DeepSkyBlue, (float)_height);
-			else if (segment == sand) col = Color.Lerp(Color.Wheat, Color.Tan, (float)_height);
-			else if (segment == ground) col = Color.Lerp(Color.YellowGreen, Color.DarkGreen, (float)_height);
-			else col = Color.Lerp(new Color(0x54, 0x3D, 0x21), Color.Snow, (float)_height);
-
-			return col;
-		}
+			if (segment == water)
+				Color = Color.Lerp(Color.DarkBlue, Color.DeepSkyBlue, (float)_height);
+			else if (segment == sand)
+				Color = Color.Lerp(Color.Wheat, Color.Tan, (float)_height);
+			else if (segment == ground)
+				Color = Color.Lerp(Color.YellowGreen, Color.DarkGreen, (float)_height);
+			else
+				Color = Color.Lerp(new Color(0x54, 0x3D, 0x21), Color.Snow, (float)_height);
+			}
 	}
 }

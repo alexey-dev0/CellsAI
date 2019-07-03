@@ -1,17 +1,20 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using CellsAI.Entities.Creatures.Effectors;
+using CellsAI.Entities.Creatures.Receptors;
 using NeuralNetworkLib;
 
 namespace CellsAI.Entities.Creatures
 {
 	internal class SimpleCreature : Creature
 	{
-		public SimpleCreature(SpriteBatch sprBatch, int x, int y) : base(sprBatch)
+		public SimpleCreature(int x, int y) : base()
 		{
-			// ... receptors & effectors init in child object;
+			_receptors.Add(new StraightLook(this));
+			_receptors.Add(new LifeIndicator(this));
+			_effectors.Add(new Rotator(this));
+			_effectors.Add(new Mover(this));
 			X = x;
 			Y = y;
-			var network = new MultilayerPerceptron(_receptors.Count, _effectors.Count, ActivationFunctions.Sigmoid);
-			_brain = new Brain(_receptors, _effectors, network);
+			_brain = new Brain(_receptors, _effectors);
 		}
 	}
 }

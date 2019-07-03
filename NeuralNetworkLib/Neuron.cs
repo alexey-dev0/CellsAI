@@ -18,11 +18,10 @@ namespace NeuralNetworkLib
 		{
 			get
 			{
-				if (_type == NeuronType.Input || !_changed)
+				if (_type == NeuronType.Input)
 					return _result;
 				else
 				{
-					_changed = false;
 					_result = 0;
 					for (int i = _weights.Count - 1; i >= 0; i--)
 					{
@@ -34,7 +33,8 @@ namespace NeuralNetworkLib
 						else
 							_result += _parents[i].Result * _weights[i];
 					}
-					return _activationFunc(_result);
+					_result = _activationFunc(_result);
+					return _result;
 				}
 			}
 			set
@@ -50,7 +50,6 @@ namespace NeuralNetworkLib
 		private NeuronType _type;
 		private Func<double, double> _activationFunc;
 		private Random _rand;
-		private bool _changed;
 
 		public Neuron(NeuronType type = NeuronType.Hidden)
 		{
@@ -69,14 +68,14 @@ namespace NeuralNetworkLib
 			if (type == NeuronType.Input) _result = result;
 		}
 
-		public Neuron(NeuronType type, Func<double, double> activationFunc) : this(type) => _activationFunc = activationFunc;
+		public Neuron(NeuronType type, Func<double, double> activationFunc) : this(type) 
+			=> _activationFunc = activationFunc;
 
 		public void AddParent(Neuron neuron, double weight = -1)
 		{
 			_parents.Add(neuron);
 			if (weight == -1) _weights.Add(_rand.NextDouble());
 			else _weights.Add(weight);
-			_changed = true;
 		}
 
 		public void AddParents(List<Neuron> neurons, List<double> weights = null)
@@ -100,16 +99,12 @@ namespace NeuralNetworkLib
 		{
 			for (int i = 0; i < _weights.Count; i++)
 				_weights[i] = _rand.NextDouble();
-			_changed = true;
 		}
 
 		public void RandomChange(int count = 1)
 		{
 			while (count-- > 0)
-			{
 				_weights[_rand.Next(_weights.Count)] = _rand.NextDouble();
-			}
-			_changed = true;
 		}
 	}
 }

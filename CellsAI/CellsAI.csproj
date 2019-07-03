@@ -116,6 +116,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Creatures\Effectors\Mover.cs" />
+    <Compile Include="Entities\Creatures\Effectors\Rotator.cs" />
+    <Compile Include="Entities\Creatures\Receptors\LifeIndicator.cs" />
     <Compile Include="Game\GameParameters.cs" />
     <Compile Include="World\Cell.cs" />
     <Compile Include="World\Chunk.cs" />

@@ -1,9 +1,12 @@
 ﻿using CellsAI.Entities;
+using CellsAI.Entities.Creatures;
+using CellsAI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProceduralGenerationLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.World
@@ -15,27 +18,33 @@ namespace CellsAI.World
 
 		private readonly OpenSimplexNoise _generator;
 		private readonly Dictionary<Vector2, Chunk> _chunks;
-		private readonly List<Entity> _entities;
+		private readonly List<Creature> _creatures;
 
-		public Map(int seed)
+		public Map()
 		{
-			_generator = new OpenSimplexNoise(seed);
 			_chunks = new Dictionary<Vector2, Chunk>();
+			_creatures = new List<Creature>();
+			_generator = new OpenSimplexNoise((int)DateTime.Now.Ticks);
 		}
 
-		public Map(OpenSimplexNoise generator)
+		public Map(int seed) : this()
+		{
+			_generator = new OpenSimplexNoise(seed);
+		}
+
+		public Map(OpenSimplexNoise generator) : this()
 		{
 			_generator = generator;
-			_chunks = new Dictionary<Vector2, Chunk>();
 		}
 
 		public void Update()
 		{
-			foreach (var entity in _entities)
-				entity.Update();
+			for (int i = _creatures.Count - 1; i >= 0; i--)
+			{
+				if (_creatures[i].Health <= 0) _creatures.RemoveAt(i);
+				else _creatures[i].Update();
+			}
 		}
-
-		public Map() : this((int)DateTime.Now.Ticks) { }
 
 		private void AddChunk(int x, int y)
 			=> AddChunk(new Vector2(x, y));
@@ -43,11 +52,11 @@ namespace CellsAI.World
 		private void AddChunk(Vector2 position)
 			=> _chunks.Add(position, new Chunk(_generator, position));
 
-		public void Draw(SpriteBatch sprBatch)
+		public void Draw()
 		{
-			sprBatch.Begin(samplerState: SamplerState.PointClamp);
-			var width = sprBatch.GraphicsDevice.Viewport.Width;
-			var height = sprBatch.GraphicsDevice.Viewport.Height;
+			MyGame.SprBatch.Begin(samplerState: SamplerState.PointClamp);
+			var width = MyGame.SprBatch.GraphicsDevice.Viewport.Width;
+			var height = MyGame.SprBatch.GraphicsDevice.Viewport.Height;
 
 			int chunkHCount = (int)Math.Ceiling(width / ZOOM_FACTOR) + 1;
 			int chunkVCount = (int)Math.Ceiling(height / ZOOM_FACTOR) + 1;
@@ -62,27 +71,18 @@ namespace CellsAI.World
 				for (int y = 0; y < chunkVCount; y++)
 				{
 					var chunkPos = new Vector2(initChunkPoint.X + x, initChunkPoint.Y + y);
-					sprBatch.Draw(
-						texture: GetChunk(chunkPos).GetTexture(sprBatch.GraphicsDevice),
-						position: initDrawPoint + new Vector2(x * ZOOM_FACTOR, y * ZOOM_FACTOR),
-						sourceRectangle: null,
-						color: Color.White,
-						rotation: 0f,
-						origin: Vector2.Zero,
-						scale: new Vector2(CELL_SIZE * SCALE),
-						effects: SpriteEffects.None,
-						layerDepth: 0f);
+					var drawPos = initDrawPoint + new Vector2(x * ZOOM_FACTOR, y * ZOOM_FACTOR);
+					GetChunk(chunkPos).Draw(drawPos);
 				}
 
-			sprBatch.End();
+			MyGame.SprBatch.End();
 			Game.DebugInfo.DebugMessage += $"CHUNKS: {_chunks.Count}\n";
+			if (_creatures.Count > 0)
+				Game.DebugInfo.DebugMessage += _creatures[0].ToString();
 		}
 
 		private Chunk GetChunk(int x, int y)
-		{
-			var position = new Vector2(x, y);
-			return GetChunk(position);
-		}
+			=> GetChunk(new Vector2(x, y));
 
 		private Chunk GetChunk(Vector2 position)
 		{
@@ -101,9 +101,23 @@ namespace CellsAI.World
 			}
 		}
 
-		public void AddCreatures()
+		public void AddCreatures(int count)
 		{
-
+			int x = 0;
+			int y = 0;
+			var r = new Random(MyGame.Seed);
+			for (int i = 0; i < count; i++)
+			{
+				while (this[x, y].MyType == Cell.CellType.Water
+					|| this[x, y].Content.Count > 0)
+				{
+					x += -10 + r.Next(21);
+					y += -10 + r.Next(21);
+				}
+				var creature = new SimpleCreature(x, y);
+				this[x, y].Enter(creature);
+				_creatures.Add(creature);
+			}
 		}
 
 		public void Dispose()
