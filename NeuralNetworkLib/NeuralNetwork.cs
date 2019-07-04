@@ -14,7 +14,7 @@ namespace NeuralNetworkLib
 			while (inputCount-- > 0)
 				_input.Add(new Neuron(Neuron.NeuronType.Input));
 			while (outputCount-- > 0)
-				_output.Add(new Neuron(Neuron.NeuronType.Output, 
+				_output.Add(new Neuron(Neuron.NeuronType.Output,
 					ActivationFunctions.Sigmoid)); ;
 		}
 
@@ -22,5 +22,9 @@ namespace NeuralNetworkLib
 
 		public List<double> Process(double[] input)
 			=> Process(new List<double>(input));
+
+		public abstract NeuralNetwork Copy();
+
+		public abstract void RandomChange(int count, int perNeuron);
 	}
 }

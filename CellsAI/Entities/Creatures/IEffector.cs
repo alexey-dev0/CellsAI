@@ -2,7 +2,7 @@
 {
 	public interface IEffector
 	{
-		double Value { get;  set; }
+		double Value { get; set; }
 
 		void Perform();
 	}

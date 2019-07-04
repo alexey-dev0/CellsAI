@@ -18,24 +18,14 @@ namespace NeuralNetworkLib
 		{
 			get
 			{
-				if (_type == NeuronType.Input)
-					return _result;
-				else
+				if (_type != NeuronType.Input)
 				{
 					_result = 0;
-					for (int i = _weights.Count - 1; i >= 0; i--)
-					{
-						if (_weights[i] == 0.0)
-						{
-							_weights.RemoveAt(i);
-							_parents.RemoveAt(i);
-						}
-						else
-							_result += _parents[i].Result * _weights[i];
-					}
+					for (int i = 0; i < _weights.Count; i++)
+						_result += _parents[i].Result * _weights[i];
 					_result = _activationFunc(_result);
-					return _result;
 				}
+				return _result;
 			}
 			set
 			{
@@ -68,7 +58,7 @@ namespace NeuralNetworkLib
 			if (type == NeuronType.Input) _result = result;
 		}
 
-		public Neuron(NeuronType type, Func<double, double> activationFunc) : this(type) 
+		public Neuron(NeuronType type, Func<double, double> activationFunc) : this(type)
 			=> _activationFunc = activationFunc;
 
 		public void AddParent(Neuron neuron, double weight = -1)
@@ -78,17 +68,16 @@ namespace NeuralNetworkLib
 			else _weights.Add(weight);
 		}
 
-		public void AddParents(List<Neuron> neurons, List<double> weights = null)
+		public void AddParents(List<Neuron> neurons, Neuron other = null)
 		{
 			_parents.AddRange(neurons);
-			if (weights == null)
+			if (other == null)
 			{
 				for (int i = 0; i < neurons.Count; i++)
 					_weights.Add(_rand.NextDouble());
 			}
 			else
-				_weights.AddRange(weights);
-			ResetWeights();
+				_weights.AddRange(other._weights);
 		}
 
 		public void AddChild(Neuron neuron) => _children.Add(neuron);

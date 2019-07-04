@@ -5,6 +5,8 @@
 		public int X { get; protected set; }
 		public int Y { get; protected set; }
 
-		public virtual void Update() { }
+		public virtual void Update()
+		{
+		}
 	}
 }

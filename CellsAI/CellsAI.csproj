@@ -116,6 +116,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Creatures\Effectors\Absorber.cs" />
     <Compile Include="Entities\Creatures\Effectors\Mover.cs" />
     <Compile Include="Entities\Creatures\Effectors\Rotator.cs" />
     <Compile Include="Entities\Creatures\Receptors\LifeIndicator.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Game\DebugInfo.cs" />
     <Compile Include="Entities\Creatures\IReceptor.cs" />
     <Compile Include="Entities\Entity.cs" />
+    <Compile Include="World\CreatureController.cs" />
     <Compile Include="World\Map.cs" />
     <Compile Include="Game\MyGame.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">

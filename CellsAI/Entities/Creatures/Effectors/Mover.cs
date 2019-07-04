@@ -1,6 +1,6 @@
 ﻿namespace CellsAI.Entities.Creatures.Effectors
 {
-	class Mover : IEffector
+	internal class Mover : IEffector
 	{
 		private Creature _creature;
 
@@ -20,12 +20,15 @@
 				case Creature.Rotation.Right:
 					dx = 1;
 					break;
+
 				case Creature.Rotation.Down:
 					dy = 1;
 					break;
+
 				case Creature.Rotation.Left:
 					dx = -1;
 					break;
+
 				case Creature.Rotation.Up:
 					dy = -1;
 					break;

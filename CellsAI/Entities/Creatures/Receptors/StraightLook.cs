@@ -20,21 +20,23 @@ namespace CellsAI.Entities.Creatures.Receptors
 		public void Receive()
 		{
 			int dx = 0, dy = 0;
-			switch(_creature.MyRotation)
+			switch (_creature.MyRotation)
 			{
 				case Creature.Rotation.Right:
 					dx = 1;
 					break;
+
 				case Creature.Rotation.Down:
 					dy = 1;
 					break;
+
 				case Creature.Rotation.Left:
 					dx = -1;
 					break;
+
 				case Creature.Rotation.Up:
 					dy = -1;
 					break;
-
 			}
 
 			int vx = _creature.X;

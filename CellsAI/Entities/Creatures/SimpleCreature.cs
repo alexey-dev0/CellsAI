@@ -6,15 +6,21 @@ namespace CellsAI.Entities.Creatures
 {
 	internal class SimpleCreature : Creature
 	{
-		public SimpleCreature(int x, int y) : base()
+		public SimpleCreature(int x, int y, NeuralNetwork network = null) : base()
 		{
 			_receptors.Add(new StraightLook(this));
 			_receptors.Add(new LifeIndicator(this));
 			_effectors.Add(new Rotator(this));
 			_effectors.Add(new Mover(this));
+			//_effectors.Add(new Absorber(this));
 			X = x;
 			Y = y;
-			_brain = new Brain(_receptors, _effectors);
+			if (network != null)
+			{
+				network = network.Copy();
+				network.RandomChange(10, 5);
+			}
+			_brain = new Brain(_receptors, _effectors, network);
 		}
 	}
 }

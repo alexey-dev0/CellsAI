@@ -1,6 +1,7 @@
 ﻿using CellsAI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeuralNetworkLib;
 using System.Collections.Generic;
 
 namespace CellsAI.Entities.Creatures
@@ -18,10 +19,24 @@ namespace CellsAI.Entities.Creatures
 		protected Brain _brain;
 		protected List<IReceptor> _receptors;
 		protected List<IEffector> _effectors;
+		protected bool _deleted;
 
 		public Rotation MyRotation { get; set; }
-		public int Health { get; set; }
-		public readonly int MaxHealth = 1000;
+		public int Lifetime;
+
+		protected int _health;
+		public int Health
+		{
+			get { return _health; }
+			set
+			{
+				if (_deleted) return;
+				_health = value > MaxHealth ? MaxHealth : value;
+				if (_health <= 0) Delete(); 
+			}
+		}
+
+		public readonly int MaxHealth = 60;
 
 		public Creature()
 		{
@@ -62,8 +77,9 @@ namespace CellsAI.Entities.Creatures
 
 		public override void Update()
 		{
+			if (_deleted) return;
 			Health--;
-			if (Health <= 0) return;
+			Lifetime++;
 			foreach (var receptor in _receptors)
 				receptor.Receive();
 			_brain.Update();
@@ -71,17 +87,37 @@ namespace CellsAI.Entities.Creatures
 				effector.Perform();
 		}
 
-		public void Move(int dx, int dy)
+		private void Delete()
 		{
 			MyGame.World[X, Y].Leave(this);
-			if (Health <= 0) return;
+			_deleted = true;
+		}
+
+		public void Move(int dx, int dy)
+		{
+			if (_deleted) return;
+			MyGame.World[X, Y].Leave(this);
 			X += dx;
 			Y += dy;
-			MyGame.World[X, Y].Enter(this);
+			// TODO
+			if (MyGame.World[X, Y].MyType == World.Cell.CellType.Water)
+				Health = 0;
+			else
+				MyGame.World[X, Y].Enter(this);
+			var food = MyGame.World[X, Y].Content.Find(e => e is Food);
+			if (food != null)
+			{
+				Health += (food as Food).FoodValue;
+				MyGame.World[X, Y].Leave(food);
+			}
 		}
+
+		public NeuralNetwork GetNetwork()
+			=> _brain.GetNetwork();
 
 		public override string ToString()
 		{
+			if (_deleted) return "DELETED\n";
 			var result = "";
 			foreach (var r in _receptors)
 				foreach (var v in r.Values)

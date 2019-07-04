@@ -97,6 +97,6 @@ namespace CellsAI.World
 				Color = Color.Lerp(Color.YellowGreen, Color.DarkGreen, (float)_height);
 			else
 				Color = Color.Lerp(new Color(0x54, 0x3D, 0x21), Color.Snow, (float)_height);
-			}
+		}
 	}
 }

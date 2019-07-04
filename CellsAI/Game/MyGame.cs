@@ -18,6 +18,7 @@ namespace CellsAI.Game
 		private WpfMouse _mouse;
 
 		private static Map _world;
+		private CreatureController _controller;
 		public MainWindow Win;
 
 		public static Map World
@@ -43,6 +44,7 @@ namespace CellsAI.Game
 			SprBatch = new SpriteBatch(_graphics.GraphicsDevice);
 			_keyboard = new WpfKeyboard(this);
 			_mouse = new WpfMouse(this);
+			_controller = new CreatureController();
 
 			Win.AddSlider("Scale", 1, 100, 20);
 			Win.AddSlider("Octaves", 1, 8, 4);
@@ -66,7 +68,7 @@ namespace CellsAI.Game
 
 		protected override void LoadContent()
 		{
-			World.AddCreatures(10);
+			_controller.AddCreatures(100);
 			base.LoadContent();
 		}
 
@@ -81,7 +83,7 @@ namespace CellsAI.Game
 			if (keyboardState.IsKeyDown(Keys.D)) _x += velocity;
 			SCALE = 1 + _mouse.GetState().ScrollWheelValue / 1000.0f;
 
-			World.Update();
+			_controller.Update();
 
 			base.Update(time);
 		}

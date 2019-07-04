@@ -1,6 +1,6 @@
 ﻿namespace CellsAI.Entities.Creatures.Effectors
 {
-	class Rotator : IEffector
+	internal class Rotator : IEffector
 	{
 		private Creature _creature;
 

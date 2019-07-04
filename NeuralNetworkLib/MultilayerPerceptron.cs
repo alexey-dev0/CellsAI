@@ -6,17 +6,15 @@ namespace NeuralNetworkLib
 	public class MultilayerPerceptron : NeuralNetwork
 	{
 		private List<List<Neuron>> _hidden;
+
 		// Activation functions
 		private Func<double, double> _func;
 
-		public MultilayerPerceptron(int inputCount, int outputCount, Func<double, double> func) 
+		public MultilayerPerceptron(int inputCount, int outputCount, Func<double, double> func)
 			: base(inputCount, outputCount)
 		{
 			_hidden = new List<List<Neuron>>();
 			_func = func;
-			AddLayer(8);
-			AddLayer(6);
-			Connect();
 		}
 
 		// Adding hidden layer with "count" neurons in it
@@ -51,6 +49,33 @@ namespace NeuralNetworkLib
 			}
 		}
 
+		private void Copy(MultilayerPerceptron other)
+		{
+			foreach (var l in other._hidden)
+				AddLayer(l.Count);
+
+			if (_hidden.Count == 0)
+				for (int i = 0; i < _output.Count; i++)
+					_output[i].AddParents(_input, other._output[i]);
+			else
+			{
+				for (int i = 0; i < _hidden[0].Count; i++)
+					_hidden[0][i].AddParents(_input, other._hidden[0][i]);
+				for (int i = 1; i < _hidden.Count; i++)
+					for (int j = 0; j < _hidden[i].Count; j++)
+						_hidden[i][j].AddParents(_hidden[i - 1], other._hidden[i][j]);
+				for (int i = 0; i < _output.Count; i++)
+					_output[i].AddParents(_hidden[_hidden.Count - 1], other._output[i]);
+			}
+		}
+
+		public override NeuralNetwork Copy()
+		{
+			var result = new MultilayerPerceptron(_input.Count, _output.Count, _func);
+			result.Copy(this);
+			return result;
+		}
+
 		// Process the input values list & get result values list
 		public override List<double> Process(List<double> input)
 		{
@@ -60,6 +85,23 @@ namespace NeuralNetworkLib
 			foreach (var n in _output)
 				result.Add(n.Result);
 			return result;
+		}
+
+		public override void RandomChange(int count = 1, int perNeuron = 1)
+		{
+			var rand = new Random();
+			while (count-- > 0)
+			{
+				Neuron n;
+				if (rand.NextDouble() > 0.7)
+					n = _output[rand.Next(_output.Count)];
+				else
+				{
+					int i = rand.Next(_hidden.Count);
+					n = _hidden[i][rand.Next(_hidden[i].Count)];
+				}
+				n.RandomChange(perNeuron);
+			}
 		}
 	}
 }

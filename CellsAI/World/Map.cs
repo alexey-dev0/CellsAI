@@ -1,12 +1,9 @@
-﻿using CellsAI.Entities;
-using CellsAI.Entities.Creatures;
-using CellsAI.Game;
+﻿using CellsAI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProceduralGenerationLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.World
@@ -18,12 +15,10 @@ namespace CellsAI.World
 
 		private readonly OpenSimplexNoise _generator;
 		private readonly Dictionary<Vector2, Chunk> _chunks;
-		private readonly List<Creature> _creatures;
 
 		public Map()
 		{
 			_chunks = new Dictionary<Vector2, Chunk>();
-			_creatures = new List<Creature>();
 			_generator = new OpenSimplexNoise((int)DateTime.Now.Ticks);
 		}
 
@@ -35,15 +30,6 @@ namespace CellsAI.World
 		public Map(OpenSimplexNoise generator) : this()
 		{
 			_generator = generator;
-		}
-
-		public void Update()
-		{
-			for (int i = _creatures.Count - 1; i >= 0; i--)
-			{
-				if (_creatures[i].Health <= 0) _creatures.RemoveAt(i);
-				else _creatures[i].Update();
-			}
 		}
 
 		private void AddChunk(int x, int y)
@@ -77,8 +63,6 @@ namespace CellsAI.World
 
 			MyGame.SprBatch.End();
 			Game.DebugInfo.DebugMessage += $"CHUNKS: {_chunks.Count}\n";
-			if (_creatures.Count > 0)
-				Game.DebugInfo.DebugMessage += _creatures[0].ToString();
 		}
 
 		private Chunk GetChunk(int x, int y)
@@ -98,25 +82,6 @@ namespace CellsAI.World
 				int chunkX = x / CHUNK_SIZE;
 				int chunkY = y / CHUNK_SIZE;
 				return GetChunk(chunkX, chunkY)[x % CHUNK_SIZE, y % CHUNK_SIZE];
-			}
-		}
-
-		public void AddCreatures(int count)
-		{
-			int x = 0;
-			int y = 0;
-			var r = new Random(MyGame.Seed);
-			for (int i = 0; i < count; i++)
-			{
-				while (this[x, y].MyType == Cell.CellType.Water
-					|| this[x, y].Content.Count > 0)
-				{
-					x += -10 + r.Next(21);
-					y += -10 + r.Next(21);
-				}
-				var creature = new SimpleCreature(x, y);
-				this[x, y].Enter(creature);
-				_creatures.Add(creature);
 			}
 		}
 

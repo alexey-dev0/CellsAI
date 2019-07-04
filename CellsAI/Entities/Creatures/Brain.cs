@@ -1,5 +1,4 @@
 ﻿using NeuralNetworkLib;
-using System;
 using System.Collections.Generic;
 
 namespace CellsAI.Entities.Creatures
@@ -10,7 +9,7 @@ namespace CellsAI.Entities.Creatures
 		private List<IEffector> _effectors;
 		private NeuralNetwork _network;
 
-		public Brain(List<IReceptor> receptors, List<IEffector> effectors)
+		public Brain(List<IReceptor> receptors, List<IEffector> effectors, NeuralNetwork network = null)
 		{
 			_receptors = receptors;
 			_effectors = effectors;
@@ -18,7 +17,15 @@ namespace CellsAI.Entities.Creatures
 			foreach (var r in _receptors)
 				inputCount += r.Values.Count;
 			var outputCount = _effectors.Count;
-			_network = new MultilayerPerceptron(inputCount, outputCount, ActivationFunctions.Sigmoid);
+			if (network == null)
+			{
+				var newNetwork = new MultilayerPerceptron(inputCount, outputCount, ActivationFunctions.Sigmoid);
+				newNetwork.AddLayer(8);
+				newNetwork.AddLayer(6);
+				newNetwork.Connect();
+				network = newNetwork;
+			}
+			_network = network;
 		}
 
 		public void Update()
@@ -30,5 +37,8 @@ namespace CellsAI.Entities.Creatures
 			for (int i = 0; i < _effectors.Count; i++)
 				_effectors[i].Value = outputs[i];
 		}
+
+		public NeuralNetwork GetNetwork()
+			=> _network;
 	}
 }

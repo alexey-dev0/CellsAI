@@ -43,7 +43,7 @@ namespace CellsAI.World
 					_cellGrid[i, j] = new Cell(this, noiseHeightMap[j, i]);
 		}
 
-		private double _foodRate = 0.02;
+		private double _foodRate = 0.5;
 
 		private void GenerateFood()
 		{
@@ -58,7 +58,6 @@ namespace CellsAI.World
 						_cellGrid[x, y].Content.Add(food);
 						_content.Add(food);
 					}
-						
 		}
 
 		private double[,] smoothNoise()
@@ -144,7 +143,7 @@ namespace CellsAI.World
 				int eY = (entity.Y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE;
 				var entityPos = new Vector2(eX, eY);
 				entityPos *= CELL_SIZE * SCALE;
-				float rot = entity is Creature ? (float)(Math.PI / 4 * (int)(entity as Creature).MyRotation) : 0f;
+				float rot = entity is Creature ? MathHelper.PiOver2 * (int)(entity as Creature).MyRotation : 0f;
 				MyGame.SprBatch.Draw(
 					texture: entity.GetTexture(),
 					position: position + entityPos,
@@ -161,7 +160,6 @@ namespace CellsAI.World
 				//	position + entityPos - new Vector2(-5),
 				//	Color.White);
 			}
-			//if (_x == 0 && _y == 0) throw new Exception();
 		}
 
 		public void Update() // Seems no reason

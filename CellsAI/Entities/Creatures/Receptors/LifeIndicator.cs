@@ -2,7 +2,7 @@
 
 namespace CellsAI.Entities.Creatures.Receptors
 {
-	class LifeIndicator : IReceptor
+	internal class LifeIndicator : IReceptor
 	{
 		private Creature _creature;
 
