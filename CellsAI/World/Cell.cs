@@ -1,11 +1,15 @@
 ﻿using CellsAI.Entities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.World
 {
 	public class Cell
 	{
+		private int _x;
+		private int _y;
+
 		public enum CellType
 		{
 			Water,
@@ -29,22 +33,19 @@ namespace CellsAI.World
 
 		public void Leave(Entity entity)
 		{
-			if (Content.Contains(entity))
-			{
-				Content.Remove(entity);
-				if (entity is Drawable) Parent.Leave(entity as Drawable);
-			}
+			if (Content.Contains(entity)) Content.Remove(entity);
+			if (entity is Drawable) Parent.Leave(entity as Drawable);
 		}
 
-		// [0..1]
+		// [0..1] -> ColorFromHeight -> New [0..1]
 		public double _height;
 
-		public Cell(Chunk parent, double height)
+		public Cell(Chunk parent, double height, int x, int y)
 		{
 			Parent = parent;
 			_height = height;
-			//MyType = CellType.Water;
-			//Color = Color.Red;
+			_x = x;
+			_y = y;
 			Content = new List<Entity>();
 			ColorFromHeight();
 		}
@@ -97,6 +98,18 @@ namespace CellsAI.World
 				Color = Color.Lerp(Color.YellowGreen, Color.DarkGreen, (float)_height);
 			else
 				Color = Color.Lerp(new Color(0x54, 0x3D, 0x21), Color.Snow, (float)_height);
+		}
+
+		public override string ToString()
+		{
+			var result = $"Cell info:\n";
+			result += $"Global: {_x}, {_y}\n";
+			result += $"Local:  {_x % CHUNK_SIZE}, {_y % CHUNK_SIZE}\n";
+			result += $"Type: {MyType} ({(int)MyType / 3.0})\n";
+			result += $"Content:\n";
+			if (Content.Count == 0) result += "-\n";
+			else foreach (var e in Content) result += $"{e.GetType().Name} {{{e.ToString()}}}\n";
+			return result;
 		}
 	}
 }

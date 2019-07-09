@@ -87,11 +87,28 @@ namespace NeuralNetworkLib
 			return result;
 		}
 
+		private void AddNeuron(int i)
+		{
+			var neuron = new Neuron(Neuron.NeuronType.Hidden, _func);
+			if (i == 0) neuron.AddParents(_input);
+			else neuron.AddParents(_hidden[i - 1]);
+			if (i == _hidden.Count - 1)
+				foreach (var n in _output)
+					n.AddParent(neuron);
+			else
+				foreach (var n in _hidden[i + 1])
+					n.AddParent(neuron);
+			_hidden[i].Add(neuron);
+		}
+
 		public override void RandomChange(int count = 1, int perNeuron = 1)
 		{
 			var rand = new Random();
 			while (count-- > 0)
 			{
+				if (rand.NextDouble() > 0.9999)
+					AddNeuron(rand.Next(_hidden.Count));
+
 				Neuron n;
 				if (rand.NextDouble() > 0.7)
 					n = _output[rand.Next(_output.Count)];
@@ -100,8 +117,19 @@ namespace NeuralNetworkLib
 					int i = rand.Next(_hidden.Count);
 					n = _hidden[i][rand.Next(_hidden[i].Count)];
 				}
-				n.RandomChange(perNeuron);
+				if (rand.NextDouble() > 0.9)
+					n.ResetWeights();
+				else
+					n.RandomChange(perNeuron);
 			}
+		}
+
+		public override int NeuronCount()
+		{
+			int result = 0;
+			foreach (var l in _hidden)
+				result += l.Count;
+			return result;
 		}
 	}
 }

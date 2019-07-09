@@ -15,6 +15,7 @@
 		{
 			if (Value <= 0.1) _creature.MyRotation--;
 			else if (Value >= 0.9) _creature.MyRotation++;
+			_creature.MyRotation = (Creature.Rotation)((int)_creature.MyRotation % 4);
 		}
 	}
 }

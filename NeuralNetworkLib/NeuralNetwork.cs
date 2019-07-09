@@ -26,5 +26,7 @@ namespace NeuralNetworkLib
 		public abstract NeuralNetwork Copy();
 
 		public abstract void RandomChange(int count, int perNeuron);
+
+		public abstract int NeuronCount();
 	}
 }

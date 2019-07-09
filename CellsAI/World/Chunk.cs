@@ -1,5 +1,6 @@
 ﻿using CellsAI.Entities;
 using CellsAI.Entities.Creatures;
+using CellsAI.Entities.Food;
 using CellsAI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -40,10 +41,10 @@ namespace CellsAI.World
 			var noiseHeightMap = smoothNoise();
 			for (int i = 0; i < CHUNK_SIZE; i++)
 				for (int j = 0; j < CHUNK_SIZE; j++)
-					_cellGrid[i, j] = new Cell(this, noiseHeightMap[j, i]);
+					_cellGrid[i, j] = new Cell(this, noiseHeightMap[j, i], _x * CHUNK_SIZE + i, _y * CHUNK_SIZE + j);
 		}
 
-		private double _foodRate = 0.5;
+		private double _foodRate = 0.05;
 
 		private void GenerateFood()
 		{
@@ -54,10 +55,24 @@ namespace CellsAI.World
 						&& _cellGrid[x, y].MyType == Cell.CellType.Ground
 						&& _cellGrid[x, y].Content.Count == 0)
 					{
-						var food = new Food(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
-						_cellGrid[x, y].Content.Add(food);
-						_content.Add(food);
+						var food = new Plant(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
+						_cellGrid[x, y].Enter(food);
 					}
+		}
+
+		private void AddFood()
+		{
+			var r = new Random();
+			int x = r.Next(CHUNK_SIZE);
+			int y = r.Next(CHUNK_SIZE);
+			while (_cellGrid[x, y].MyType != Cell.CellType.Ground
+				|| _cellGrid[x, y].Content.Count != 0)
+			{
+				x = r.Next(CHUNK_SIZE);
+				y = r.Next(CHUNK_SIZE);
+			}
+			var food = new Plant(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
+			_cellGrid[x, y].Enter(food);
 		}
 
 		private double[,] smoothNoise()
@@ -99,19 +114,39 @@ namespace CellsAI.World
 			{
 				if (_gTex == null)
 				{
-					int sz = CHUNK_SIZE * CELL_SIZE;
+					int sz = CELL_SIZE;
 					_gTex = new Texture2D(MyGame.SprBatch.GraphicsDevice, sz, sz);
 					var data = new Color[(int)Math.Pow(sz, 2)];
 					for (int i = 0; i < data.Length; i++)
-						if (i / sz == 0 || i % sz == 0
-							|| i / sz == sz - 1 || i % sz == sz - 1)
-							data[i] = Color.Black;
-						else
-							data[i] = Color.Transparent;
+							data[i] = new Color(0, 0, 0, 70);
 					_gTex.SetData(data);
 				}
 				return _gTex;
 			}
+		}
+
+		public void DrawGrid(Vector2 position, Vector2 subPos)
+		{
+			MyGame.SprBatch.Draw(
+				texture: GridTexture,
+				position: position,
+				sourceRectangle: null,
+				color: Color.White,
+				rotation: 0f,
+				origin: Vector2.Zero,
+				scale: new Vector2(SCALE * CHUNK_SIZE),
+				effects: SpriteEffects.None,
+				layerDepth: 0f);
+			MyGame.SprBatch.Draw(
+				texture: GridTexture,
+				position: position + subPos * CELL_SIZE * SCALE,
+				sourceRectangle: null,
+				color: Color.White,
+				rotation: 0f,
+				origin: Vector2.Zero,
+				scale: new Vector2(SCALE),
+				effects: SpriteEffects.None,
+				layerDepth: 0f);
 		}
 
 		public void Draw(Vector2 position)
@@ -126,16 +161,6 @@ namespace CellsAI.World
 				scale: new Vector2(CELL_SIZE * SCALE),
 				effects: SpriteEffects.None,
 				layerDepth: 0f);
-			//MyGame.SprBatch.Draw(
-			//	texture: GridTexture,
-			//	position: position,
-			//	sourceRectangle: null,
-			//	color: Color.White,
-			//	rotation: 0f,
-			//	origin: Vector2.Zero,
-			//	scale: new Vector2(SCALE),
-			//	effects: SpriteEffects.None,
-			//	layerDepth: 0f);
 			//MyGame.SprBatch.DrawString(DebugInfo.DefaultFont, $"{_x}, {_y}", position, Color.White);
 			foreach (var entity in _content)
 			{
@@ -144,13 +169,14 @@ namespace CellsAI.World
 				var entityPos = new Vector2(eX, eY);
 				entityPos *= CELL_SIZE * SCALE;
 				float rot = entity is Creature ? MathHelper.PiOver2 * (int)(entity as Creature).MyRotation : 0f;
+				var offset = new Vector2(CELL_SIZE * 0.5f);
 				MyGame.SprBatch.Draw(
 					texture: entity.GetTexture(),
-					position: position + entityPos,
+					position: position + entityPos + offset * SCALE,
 					sourceRectangle: null,
 					color: Color.White,
 					rotation: rot,
-					origin: new Vector2(CELL_SIZE / 2),
+					origin: offset,
 					scale: new Vector2(SCALE),
 					effects: SpriteEffects.None,
 					layerDepth: 0f);
@@ -189,7 +215,11 @@ namespace CellsAI.World
 		public void Leave(Drawable entity)
 		{
 			if (_content.Contains(entity))
+			{
+				//if (entity is Eatable)
+					//AddFood();
 				_content.Remove(entity);
+			}
 		}
 
 		public void Dispose()

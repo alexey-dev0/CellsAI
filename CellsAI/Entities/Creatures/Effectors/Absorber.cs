@@ -1,4 +1,5 @@
-﻿using CellsAI.Game;
+﻿using CellsAI.Entities.Food;
+using CellsAI.Game;
 
 namespace CellsAI.Entities.Creatures.Effectors
 {
@@ -16,13 +17,31 @@ namespace CellsAI.Entities.Creatures.Effectors
 		public void Perform()
 		{
 			if (Value < 0.5) return;
-			var x = _creature.X;
-			var y = _creature.Y;
-			var cell = MyGame.World[x, y];
-			var food = cell.Content.Find(e => e is Food);
-			if (food == null) return;
-			_creature.Health += (food as Food).FoodValue;
-			cell.Leave(food);
+			int dx = 0, dy = 0;
+			switch (_creature.MyRotation)
+			{
+				case Creature.Rotation.Right:
+					dx = 1;
+					break;
+
+				case Creature.Rotation.Down:
+					dy = 1;
+					break;
+
+				case Creature.Rotation.Left:
+					dx = -1;
+					break;
+
+				case Creature.Rotation.Up:
+					dy = -1;
+					break;
+			}
+
+			int vx = _creature.X + dx;
+			int vy = _creature.Y + dy;
+
+			var food = MyGame.World[vx, vy].Content.Find(e => e is Eatable);
+			if (food != null) _creature.Eat(food as Eatable);
 		}
 	}
 }

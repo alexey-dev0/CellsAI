@@ -1,4 +1,5 @@
-﻿using CellsAI.Game;
+﻿using CellsAI.Entities.Food;
+using CellsAI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeuralNetworkLib;
@@ -36,7 +37,7 @@ namespace CellsAI.Entities.Creatures
 			}
 		}
 
-		public readonly int MaxHealth = 60;
+		public readonly int MaxHealth = 30;
 
 		public Creature()
 		{
@@ -44,6 +45,12 @@ namespace CellsAI.Entities.Creatures
 			_effectors = new List<IEffector>();
 			CreateTexture();
 			Health = MaxHealth;
+		}
+
+		public void Eat(Eatable food)
+		{
+			Health += food.FoodValue;
+			food.Delete();
 		}
 
 		private void CreateTexture()
@@ -90,6 +97,7 @@ namespace CellsAI.Entities.Creatures
 		private void Delete()
 		{
 			MyGame.World[X, Y].Leave(this);
+			//MyGame.World[X, Y].Enter(new Corpse(X, Y));
 			_deleted = true;
 		}
 
@@ -104,12 +112,8 @@ namespace CellsAI.Entities.Creatures
 				Health = 0;
 			else
 				MyGame.World[X, Y].Enter(this);
-			var food = MyGame.World[X, Y].Content.Find(e => e is Food);
-			if (food != null)
-			{
-				Health += (food as Food).FoodValue;
-				MyGame.World[X, Y].Leave(food);
-			}
+			//var food = MyGame.World[X, Y].Content.Find(e => e is Eatable);
+			//if (food != null) Eat(food as Eatable);
 		}
 
 		public NeuralNetwork GetNetwork()
@@ -117,15 +121,26 @@ namespace CellsAI.Entities.Creatures
 
 		public override string ToString()
 		{
-			if (_deleted) return "DELETED\n";
-			var result = "";
+			var result = "\nCreature info:\n";
+			if (_deleted)
+			{
+				result += "DELETED";
+				return result;
+			}
+			result += $"Neurons: {GetNetwork().NeuronCount()} \n";
+			result += $"Rotation: {MyRotation}\n"; 
+			result += "Receptors:\n";
 			foreach (var r in _receptors)
+			{
+				result += $"    {r.GetType().Name}: ";
 				foreach (var v in r.Values)
-					result += $"{v}, ";
-			result += "| ";
+					result += $"{v:f1} ";
+				result += "\n";
+			}
+			result += "Effectors:\n";
 			foreach (var e in _effectors)
-				result += $"{e.Value}, ";
-			return result + "\n";
+				result += $"    {e.GetType().Name}: {e.Value:f1}\n";
+			return result;
 		}
 	}
 }

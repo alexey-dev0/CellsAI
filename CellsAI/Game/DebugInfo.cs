@@ -44,7 +44,7 @@ namespace CellsAI.Game
 			_spriteBatch.Begin();
 			DebugMessage += $"FPS: {_frames}\n";
 			_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(6), Color.Black);
-			_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(5), Color.OrangeRed);
+			_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(5), Color.White);
 			DebugMessage = "";
 			_spriteBatch.End();
 		}

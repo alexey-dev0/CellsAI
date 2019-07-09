@@ -120,6 +120,8 @@
     <Compile Include="Entities\Creatures\Effectors\Mover.cs" />
     <Compile Include="Entities\Creatures\Effectors\Rotator.cs" />
     <Compile Include="Entities\Creatures\Receptors\LifeIndicator.cs" />
+    <Compile Include="Entities\Food\Corpse.cs" />
+    <Compile Include="Entities\Food\Plant.cs" />
     <Compile Include="Game\GameParameters.cs" />
     <Compile Include="World\Cell.cs" />
     <Compile Include="World\Chunk.cs" />
@@ -129,7 +131,7 @@
     <Compile Include="Entities\Creatures\Receptors\StraightLook.cs" />
     <Compile Include="Entities\Creatures\SimpleCreature.cs" />
     <Compile Include="Entities\Drawable.cs" />
-    <Compile Include="Entities\Food.cs" />
+    <Compile Include="Entities\Food\Eatable.cs" />
     <Compile Include="Game\DebugInfo.cs" />
     <Compile Include="Entities\Creatures\IReceptor.cs" />
     <Compile Include="Entities\Entity.cs" />

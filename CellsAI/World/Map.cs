@@ -38,7 +38,7 @@ namespace CellsAI.World
 		private void AddChunk(Vector2 position)
 			=> _chunks.Add(position, new Chunk(_generator, position));
 
-		public void Draw()
+		public void Draw(int mx, int my, bool pressed)
 		{
 			MyGame.SprBatch.Begin(samplerState: SamplerState.PointClamp);
 			var width = MyGame.SprBatch.GraphicsDevice.Viewport.Width;
@@ -51,7 +51,7 @@ namespace CellsAI.World
 			var initChunkPoint = new Vector2((float)Math.Floor(LUCorner.X / ZOOM_FACTOR), (float)Math.Floor(LUCorner.Y / ZOOM_FACTOR));
 			var initDrawPoint = new Vector2(-LUCorner.X + (int)initChunkPoint.X * ZOOM_FACTOR, -LUCorner.Y + (int)initChunkPoint.Y * ZOOM_FACTOR);
 
-			Game.DebugInfo.DebugMessage += $"Position: {new Vector2(ViewX, ViewY)}\n";
+			//Game.DebugInfo.DebugMessage += $"Position: {new Vector2(ViewX, ViewY)}\n";
 
 			for (int x = 0; x < chunkHCount; x++)
 				for (int y = 0; y < chunkVCount; y++)
@@ -61,8 +61,21 @@ namespace CellsAI.World
 					GetChunk(chunkPos).Draw(drawPos);
 				}
 
+			var xx = (LUCorner.X + mx) / (SCALE * CELL_SIZE);
+			var yy = (LUCorner.Y + my) / (SCALE * CELL_SIZE);
+			int cx = (int)Math.Floor(xx / CHUNK_SIZE);
+			int cy = (int)Math.Floor(yy / CHUNK_SIZE);
+			int vx = (int)Math.Floor(xx % CHUNK_SIZE);
+			int vy = (int)Math.Floor(yy % CHUNK_SIZE);
+			vx = (vx + CHUNK_SIZE) % CHUNK_SIZE;
+			vy = (vy + CHUNK_SIZE) % CHUNK_SIZE;
+			var chunk = GetChunk(cx, cy);
+			chunk.DrawGrid(initDrawPoint + new Vector2((cx - initChunkPoint.X) * ZOOM_FACTOR, (cy - initChunkPoint.Y) * ZOOM_FACTOR), new Vector2(vx, vy));
+			Game.DebugInfo.DebugMessage += chunk[vx, vy].ToString();
+			if (pressed && chunk[vx, vy].Content.Count > 0) chunk[vx, vy].Leave(chunk[vx, vy].Content[0]);
+
 			MyGame.SprBatch.End();
-			Game.DebugInfo.DebugMessage += $"CHUNKS: {_chunks.Count}\n";
+			//Game.DebugInfo.DebugMessage += $"CHUNKS: {_chunks.Count}\n";
 		}
 
 		private Chunk GetChunk(int x, int y)

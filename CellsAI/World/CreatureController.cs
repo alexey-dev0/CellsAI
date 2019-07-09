@@ -9,9 +9,10 @@ namespace CellsAI.World
 {
 	public class CreatureController
 	{
-		private readonly List<Creature> _creatures;
+		public static List<Creature> _creatures;
 		private readonly List<Creature> _temp;
 		private int _creatureCount;
+		private int _genCount;
 
 		public CreatureController()
 		{
@@ -39,15 +40,16 @@ namespace CellsAI.World
 				}
 			}
 
-			if (_creatures.Count > 0)
-				Game.DebugInfo.DebugMessage += _creatures[0].ToString();
+			//if (_creatures.Count > 0)
+			//Game.DebugInfo.DebugMessage += _creatures[0].ToString();
 			Game.DebugInfo.DebugMessage += $"CREATURES: {_creatureCount} | {_creatures.Count}\n";
+			Game.DebugInfo.DebugMessage += $"Generation: {_genCount}\n";
 		}
 
 		private void ResetCreatures()
 		{
 			var position = Vector2.Zero;
-			var r = new Random(MyGame.Seed);
+			var r = new Random();
 
 			if (_temp.Count < 3) throw new Exception();
 
@@ -57,13 +59,14 @@ namespace CellsAI.World
 			var network3 = _temp[2].GetNetwork();
 			_temp.Clear();
 
-			var range = new double[] { 0.6, 0.9, 1.0 };
+			var range = new double[] { 0.5, 0.8, 0.9 };
 			for (int i = 0; i < _creatureCount; i++)
 			{
 				double j = (double)i / _creatureCount;
-				var network = j < range[0] ? network1 : j < range[1] ? network2 : network3;
-				position = AddCreature(position, r, network);
+				var network = j < range[0] ? network1 : j < range[1] ? network2 : j < range[2] ? network3 : null;
+				position = AddCreature(position, r, network, i);
 			}
+			_genCount++;
 		}
 
 		public void AddCreatures(int count)
@@ -73,19 +76,20 @@ namespace CellsAI.World
 			var r = new Random(MyGame.Seed);
 			for (int i = 0; i < _creatureCount; i++)
 				position = AddCreature(position, r);
+			_genCount = 1;
 		}
 
-		private Vector2 AddCreature(Vector2 pos, Random r, NeuralNetwork network = null)
+		private Vector2 AddCreature(Vector2 pos, Random r, NeuralNetwork network = null, int changeCount = 0)
 		{
 			int x = (int)pos.X;
 			int y = (int)pos.Y;
 			while (MyGame.World[x, y].MyType == Cell.CellType.Water
 				|| MyGame.World[x, y].Content.Count > 0)
 			{
-				x += -10 + r.Next(21);
-				y += -10 + r.Next(21);
+				x += -20 + r.Next(41);
+				y += -20 + r.Next(41);
 			}
-			var creature = new SimpleCreature(x, y, network);
+			var creature = new SimpleCreature(x, y, network, changeCount);
 			MyGame.World[x, y].Enter(creature);
 			_creatures.Add(creature);
 			return new Vector2(x, y);

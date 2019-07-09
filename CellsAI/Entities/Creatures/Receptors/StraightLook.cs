@@ -5,7 +5,7 @@ namespace CellsAI.Entities.Creatures.Receptors
 {
 	public class StraightLook : IReceptor
 	{
-		private const int VISIBILITY = 10;
+		private const int VISIBILITY = 8;
 
 		public List<double> Values { get; }
 
@@ -14,7 +14,9 @@ namespace CellsAI.Entities.Creatures.Receptors
 		public StraightLook(Creature creature)
 		{
 			_creature = creature;
-			Values = new List<double>() { 0, 0, 0 };
+			Values = new List<double>();
+			for (int i = 0; i < VISIBILITY * 2; i++)
+				Values.Add(0);
 		}
 
 		public void Receive()
@@ -42,23 +44,17 @@ namespace CellsAI.Entities.Creatures.Receptors
 			int vx = _creature.X;
 			int vy = _creature.Y;
 
-			Values[0] = (int)MyGame.World[vx + dx, vy + dy].MyType / 4.0;
-			double type = 0.0;
-			double dist = 0.0;
-
 			for (int i = 0; i < VISIBILITY; i++)
 			{
 				vx += dx;
 				vy += dy;
-				if (MyGame.World[vx, vy].Content.Count > 0)
-				{
-					type = MyGame.World[vx, vy].Content[0] is Creature ? 1.0 : 0.5;
-					dist = 1.0 / VISIBILITY * i;
-					break;
-				}
+				var cell = MyGame.World[vx, vy];
+				Values[i * 2] = (int)cell.MyType / 3.0;
+				if (cell.Content.Count > 0)
+					Values[i * 2 + 1] = cell.Content[0] is Creature ? 1.0 : 0.5;
+				else
+					Values[i * 2 + 1] = 0.0;
 			}
-			Values[1] = type;
-			Values[2] = dist;
 		}
 	}
 }

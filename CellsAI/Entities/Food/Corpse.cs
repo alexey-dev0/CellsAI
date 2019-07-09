@@ -3,19 +3,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace CellsAI.Entities
+namespace CellsAI.Entities.Food
 {
-	public class Food : Drawable
+	class Corpse : Eatable
 	{
-		// [1..100]
-		public int FoodValue { get; }
-
-		public Food(int x, int y, int value = 0)
+		public Corpse(int x, int y, int value = 0) : base(x, y, value)
 		{
-			X = x;
-			Y = y;
-
-			FoodValue = value <= 0 ? new Random(MyGame.Seed).Next(1, 100) : value;
 			CreateTexture();
 		}
 
@@ -36,9 +29,9 @@ namespace CellsAI.Entities
 					var pos = new Vector2(x - rad, y - rad);
 					if (pos.LengthSquared() <= radsq)
 						if (r.NextDouble() < 0.7)
-							data[ind] = new Color(0x1d, 0x54, 0x00);
+							data[ind] = new Color(0xa2, 0x26, 0x18);
 						else
-							data[ind] = Color.Transparent;
+							data[ind] = new Color(0x66, 0x66, 0x66);
 					else
 						data[ind] = Color.Transparent;
 				}

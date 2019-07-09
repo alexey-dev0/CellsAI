@@ -1,4 +1,5 @@
 ﻿using NeuralNetworkLib;
+using System;
 using System.Collections.Generic;
 
 namespace CellsAI.Entities.Creatures
@@ -20,8 +21,9 @@ namespace CellsAI.Entities.Creatures
 			if (network == null)
 			{
 				var newNetwork = new MultilayerPerceptron(inputCount, outputCount, ActivationFunctions.Sigmoid);
-				newNetwork.AddLayer(8);
-				newNetwork.AddLayer(6);
+				var r = new Random();
+				for (int i = 0; i < r.Next(2, 5); i++)
+					newNetwork.AddLayer(r.Next(3, 10));
 				newNetwork.Connect();
 				network = newNetwork;
 			}
