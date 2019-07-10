@@ -39,11 +39,14 @@ namespace CellsAI.Entities.Creatures
 
 		public readonly int MaxHealth = 30;
 
+		protected static Texture2D _myTexture;
+
 		public Creature()
 		{
 			_receptors = new List<IReceptor>();
 			_effectors = new List<IEffector>();
-			CreateTexture();
+			if (_myTexture == null) CreateTexture();
+			_texture = _myTexture;
 			Health = MaxHealth;
 		}
 
@@ -56,7 +59,7 @@ namespace CellsAI.Entities.Creatures
 		private void CreateTexture()
 		{
 			var diam = GameParameters.CELL_SIZE;
-			_texture = new Texture2D(MyGame.SprBatch.GraphicsDevice, diam, diam);
+			_myTexture = new Texture2D(MyGame.SprBatch.GraphicsDevice, diam, diam);
 			var data = new Color[diam * diam];
 
 			float rad = diam / 2f;
@@ -79,7 +82,7 @@ namespace CellsAI.Entities.Creatures
 			for (int i = diam / 2; i < diam; i++)
 				data[diam * (int)rad + i] = data[diam * (int)(rad + 1) + i] = Color.White;
 
-			_texture.SetData(data);
+			_myTexture.SetData(data);
 		}
 
 		public override void Update()

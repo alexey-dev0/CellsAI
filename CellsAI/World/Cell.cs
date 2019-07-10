@@ -1,4 +1,5 @@
 ﻿using CellsAI.Entities;
+using CellsAI.Entities.Food;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using static CellsAI.Game.GameParameters;
@@ -33,8 +34,8 @@ namespace CellsAI.World
 
 		public void Leave(Entity entity)
 		{
-			if (Content.Contains(entity)) Content.Remove(entity);
 			if (entity is Drawable) Parent.Leave(entity as Drawable);
+			if (Content.Contains(entity)) Content.Remove(entity);
 		}
 
 		// [0..1] -> ColorFromHeight -> New [0..1]

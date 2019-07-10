@@ -11,10 +11,10 @@ namespace CellsAI.Entities.Food
 		public int FoodValue {
 			get
 			{
-				//if (!_deleted)
+				if (!_deleted)
 					return _foodValue;
-				//else
-				//	throw new System.Exception();
+				else
+					throw new System.Exception();
 			}
 		}
 
@@ -28,7 +28,7 @@ namespace CellsAI.Entities.Food
 
 		public override string ToString()
 		{
-			return $"Food {X}, {Y}";
+			return $"Food {X}, {Y} {_deleted}";
 		}
 
 		public void Delete()

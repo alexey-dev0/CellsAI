@@ -166,8 +166,7 @@ namespace CellsAI.World
 			{
 				int eX = (entity.X % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE;
 				int eY = (entity.Y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE;
-				var entityPos = new Vector2(eX, eY);
-				entityPos *= CELL_SIZE * SCALE;
+				var entityPos = new Vector2(eX, eY) * CELL_SIZE * SCALE;
 				float rot = entity is Creature ? MathHelper.PiOver2 * (int)(entity as Creature).MyRotation : 0f;
 				var offset = new Vector2(CELL_SIZE * 0.5f);
 				MyGame.SprBatch.Draw(
@@ -216,8 +215,8 @@ namespace CellsAI.World
 		{
 			if (_content.Contains(entity))
 			{
-				//if (entity is Eatable)
-					//AddFood();
+				if (entity is Eatable)
+					AddFood();
 				_content.Remove(entity);
 			}
 		}

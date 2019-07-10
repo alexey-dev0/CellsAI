@@ -92,9 +92,11 @@ namespace CellsAI.World
 		{
 			get
 			{
-				int chunkX = x / CHUNK_SIZE;
-				int chunkY = y / CHUNK_SIZE;
-				return GetChunk(chunkX, chunkY)[x % CHUNK_SIZE, y % CHUNK_SIZE];
+				int chunkX = (int)Math.Floor((double)x / CHUNK_SIZE);
+				int chunkY = (int)Math.Floor((double)y / CHUNK_SIZE);
+				int cellX = x - chunkX * CHUNK_SIZE;
+				int cellY = y - chunkY * CHUNK_SIZE;
+				return GetChunk(chunkX, chunkY)[cellX, cellY];
 			}
 		}
 

@@ -7,16 +7,18 @@ namespace CellsAI.Entities.Food
 {
 	public class Plant : Eatable
 	{
+		private static Texture2D _myTexture;
 		public Plant(int x, int y, int value = 0) : base(x, y, value)
 		{
-			CreateTexture();
+			if (_myTexture == null) CreateTexture();
+			_texture = _myTexture;
 		}
 
 		private void CreateTexture()
 		{
 			var r = new Random();
 			var diam = GameParameters.CELL_SIZE;
-			_texture = new Texture2D(MyGame.SprBatch.GraphicsDevice, diam, diam);
+			_myTexture = new Texture2D(MyGame.SprBatch.GraphicsDevice, diam, diam);
 			var data = new Color[diam * diam];
 
 			float rad = diam / 2f;
@@ -36,7 +38,7 @@ namespace CellsAI.Entities.Food
 						data[ind] = Color.Transparent;
 				}
 
-			_texture.SetData(data);
+			_myTexture.SetData(data);
 		}
 	}
 }
