@@ -15,6 +15,7 @@ namespace CellsAI.World
 		private int _creatureCount;
 		private int _genCount;
 		private int _maxLifetime;
+		private int _avgLifetime;
 
 		public CreatureController()
 		{
@@ -31,11 +32,15 @@ namespace CellsAI.World
 			{
 				if (_creatures[i].Health <= 0)
 				{
+					_avgLifetime *= _creatureCount - _creatures.Count;
+					_avgLifetime += _creatures[i].Lifetime;
 					_creatures.RemoveAt(i);
-					if (_creatures.Count == 1)
+					_avgLifetime /= _creatureCount - _creatures.Count;
+					if (_creatures.Count == 3)
 						_temp.AddRange(_creatures);
 					if (_creatures.Count == 0)
 					{
+						_avgLifetime = 0;
 						ResetCreatures();
 						break;
 					}
@@ -47,11 +52,17 @@ namespace CellsAI.World
 				Game.DebugInfo.DebugMessage += $"CREATURES: {_creatureCount} | {_creatures.Count}\n";
 				Game.DebugInfo.DebugMessage += $"Generation: {_genCount}\n";
 				Game.DebugInfo.DebugMessage += $"Max Lifetime: {_maxLifetime}\n";
+				Game.DebugInfo.DebugMessage += $"Avg Lifetime: {_avgLifetime}\n";
+				//if (network0 != null)
+				//	Game.DebugInfo.DebugMessage += (network0 as SimpleNetwork).GetNeuroPresentation(false);
+
 				if (_creatures.Count > 0)
 					Game.DebugInfo.DebugMessage += _creatures[0].ToString();
 				CanDebug = false;
 			}
 		}
+
+		private NeuralNetwork network0;
 
 		private void ResetCreatures()
 		{
@@ -61,18 +72,26 @@ namespace CellsAI.World
 			//if (_temp.Count < 3) throw new Exception();
 
 			_temp.Sort((a, b) => b.Lifetime.CompareTo(a.Lifetime));
-			_maxLifetime = Math.Max(_temp[0].Lifetime, _maxLifetime);
+			if (_temp[0].Lifetime > _maxLifetime)
+			{
+				network0 = _temp[0].GetNetwork();
+				_maxLifetime = _temp[0].Lifetime;
+			}
 			var network1 = _temp[0].GetNetwork();
-			//var network2 = _temp[1].GetNetwork();
-			//var network3 = _temp[2].GetNetwork();
+			var network2 = _temp[1].GetNetwork();
+			var network3 = _temp[2].GetNetwork();
 			_temp.Clear();
 
-			var range = new double[] { 0.4, 0.6, 0.8 };
+			var range = new double[] { 0.1, 0.3, 0.4, 0.5 };
 			for (int i = 0; i < _creatureCount; i++)
 			{
 				double j = (double)i / _creatureCount;
-				var network = j < range[1] ? network1 : null;//j < range[1] ? network2 : j < range[2] ? network3 : null;
-				position = AddCreature(position, r, network, i);
+				var network = j < range[0] ? network0
+					: j < range[1] ? network1
+					: j < range[2] ? network2
+					: j < range[3] ? network3
+					: null;
+				position = AddCreature(position, r, network, 1 + i * 10);
 			}
 			_genCount++;
 		}

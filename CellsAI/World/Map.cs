@@ -1,9 +1,13 @@
-﻿using CellsAI.Game;
+﻿using CellsAI.Entities.Creatures;
+using CellsAI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using NeuralNetworkLib;
 using ProceduralGenerationLib;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.World
@@ -38,7 +42,7 @@ namespace CellsAI.World
 		private void AddChunk(Vector2 position)
 			=> _chunks.Add(position, new Chunk(_generator, position));
 
-		public void Draw(int mx, int my, bool pressed)
+		public void Draw(int mx, int my, MouseState state)
 		{
 			MyGame.SprBatch.Begin(samplerState: SamplerState.PointClamp);
 			var width = MyGame.SprBatch.GraphicsDevice.Viewport.Width;
@@ -72,7 +76,19 @@ namespace CellsAI.World
 			var chunk = GetChunk(cx, cy);
 			chunk.DrawGrid(initDrawPoint + new Vector2((cx - initChunkPoint.X) * ZOOM_FACTOR, (cy - initChunkPoint.Y) * ZOOM_FACTOR), new Vector2(vx, vy));
 			Game.DebugInfo.DebugMessage += chunk[vx, vy].ToString();
-			if (pressed && chunk[vx, vy].Content.Count > 0) chunk[vx, vy].Leave(chunk[vx, vy].Content[0]);
+			if (state.RightButton == ButtonState.Pressed 
+				&& chunk[vx, vy].Content.Count > 0)
+				chunk[vx, vy].Leave(chunk[vx, vy].Content[0]);
+			if (state.LeftButton == ButtonState.Pressed
+				&& chunk[vx, vy].Content.Count > 0)
+			{
+				var creature = chunk[vx, vy].Content[0] as Creature;
+				if (creature != null)
+					System.Windows.MessageBox.Show(
+						(creature.GetNetwork() as SimpleNetwork).GetNeuroPresentation(false),
+						"Title",
+						MessageBoxButton.OK);
+			}
 
 			MyGame.SprBatch.End();
 			Game.DebugInfo.DebugMessage += $"CHUNKS: {_chunks.Count}\n";

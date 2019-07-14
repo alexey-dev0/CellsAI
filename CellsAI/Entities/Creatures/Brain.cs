@@ -31,9 +31,9 @@ namespace CellsAI.Entities.Creatures
 				// SimpleNetwork
 				var hidden = new List<int>();
 				for (int i = 0; i < r.Next(1, 5); i++)
-					hidden.Add(r.Next(3, 12));
-				var newNetwork = new SimpleNetwork(inputCount, outputCount, ActivationFunctions.TanH, hidden.ToArray());
-				for (int i = 0; i < 4; i++)
+					hidden.Add(r.Next(2, 12));
+				var newNetwork = new SimpleNetwork(inputCount, outputCount, ActivationFunctions.GetRandom(), hidden.ToArray());
+				for (int i = 0; i < hidden.Count * 3; i++)
 					newNetwork.Id += "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[r.Next(62)];
 
 				network = newNetwork;

@@ -52,7 +52,7 @@ namespace CellsAI.Game
 			//Win.AddSlider("Lacunarity", 1, 10, 3);
 			//Win.AddSlider("NoiseHeight", 0, 2, 1);
 
-			Win.AddSlider("UpdatePerFrame", -100, 100, 1, true);
+			Win.AddSlider("UpdatePerFrame", -100, 1000, 1, true);
 
 			Reset();
 
@@ -70,7 +70,7 @@ namespace CellsAI.Game
 
 		protected override void LoadContent()
 		{
-			_controller.AddCreatures(100);
+			_controller.AddCreatures(10);
 			base.LoadContent();
 		}
 
@@ -88,11 +88,12 @@ namespace CellsAI.Game
 			SCALE = 1 + _mouse.GetState().ScrollWheelValue / 1000.0f;
 
 			int updateVal = (int)MainWindow.Sliders["UpdatePerFrame"].Value;
+			if (keyboardState.IsKeyDown(Keys.Space)) return;
 
-			if (updateVal < 0)
+			if (updateVal <= 0)
 			{
 				if (_counter == 0) _controller.Update();
-				_counter = (_counter + 1) % -updateVal;
+				_counter = (_counter + 1) % (-updateVal + 2);
 			}
 			else
 			{
@@ -113,7 +114,7 @@ namespace CellsAI.Game
 
 				World.ViewX = _x;
 				World.ViewY = _y;
-				World.Draw(vx, vy, _mouse.GetState().RightButton == ButtonState.Pressed);
+				World.Draw(vx, vy, _mouse.GetState());
 			}
 			_controller.CanDebug = true;
 			base.Draw(time);

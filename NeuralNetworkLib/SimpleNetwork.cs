@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace NeuralNetworkLib
 {
@@ -96,6 +97,9 @@ namespace NeuralNetworkLib
 		{
 			for (int weight = 0; weight < _weights[layer][neuro].Count; weight++)
 				_weights[layer][neuro][weight] = _rand.NextDouble() * 2 - 1;
+			var temp = Id.ToCharArray();
+			temp[_rand.Next(Id.Length)] = (char)_rand.Next(74, 122);
+			Id = new string(temp);
 		}
 
 		private void AddNeuron(int layer)
@@ -111,7 +115,7 @@ namespace NeuralNetworkLib
 			while (count-- > 0)
 			{
 				var layer = _rand.Next(1, _weights.Count);
-				if (_rand.NextDouble() > 0.999 && layer != _weights.Count - 1)
+				if (_rand.NextDouble() > 0.996 && layer != _weights.Count - 1)
 				{
 					AddNeuron(layer);
 					Id += "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[_rand.Next(62)];
@@ -132,6 +136,42 @@ namespace NeuralNetworkLib
 				//temp[_rand.Next(Id.Length)] = (char)_rand.Next(74, 122);
 				//Id = new string(temp);
 			}
+		}
+
+		private string _myRepresentation;
+
+		public string GetNeuroPresentation(bool showValues)
+		{
+			if (_myRepresentation != null) return _myRepresentation;
+			int height = 0;
+			foreach (var l in _values)
+				height = Math.Max(height, l.Count);
+			int width = _values.Count;
+			var field = new string[height, width];
+			for (int i = 0; i < height; i++)
+				for (int j = 0; j < width; j++)
+					field[i, j] = "    ";
+			for (int i = 0; i < width; i++)
+			{
+				int offset = (height - _values[i].Count) / 2;
+				for (int j = 0; j < _values[i].Count; j++)
+					if (showValues) field[j + offset, i] = (_values[i][j] >= 0 ? " " : "") + $"{_values[i][j]:F1}";
+					else field[j + offset, i] = i == 0 ? ">>" : i == width - 1 ? "|~" : "-O-";
+			}
+
+			var result = new StringBuilder();
+			for (int i = 0; i < width * 9; i++) result.Append('-');
+			result.Append("\n");
+			for (int i = 0; i < height; i++)
+			{
+				for (int j = 0; j < width; j++)
+					result.Append(field[i, j] + "\t");
+				result.Append("\n");
+			}
+			for (int i = 0; i < width * 9; i++) result.Append('-');
+			result.Append("\n");
+			_myRepresentation = result.ToString();
+			return _myRepresentation;
 		}
 	}
 }

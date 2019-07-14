@@ -47,7 +47,7 @@ namespace CellsAI.Views
 		private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			double value = (sender as Slider).Value;
-			_sliderBox[sender as Slider].Text = value < 0 ? $"1/{-value:F0}" : $"{value:F2}";
+			_sliderBox[sender as Slider].Text = value <= 0 ? $"1/{-value + 2:F0}" : $"{value:F2}";
 		}
 
 		private static Dictionary<Slider, TextBox> _sliderBox = new Dictionary<Slider, TextBox>();

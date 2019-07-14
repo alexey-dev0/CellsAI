@@ -24,7 +24,7 @@ namespace CellsAI.Entities.Food
 			X = x;
 			Y = y;
 
-			_foodValue = 40;//value <= 0 ? new Random(MyGame.Seed).Next(1, 100) : value;
+			_foodValue = 100;//value <= 0 ? new Random(MyGame.Seed).Next(1, 100) : value;
 		}
 
 		public override string ToString()

@@ -50,6 +50,27 @@ namespace CellsAI.Entities.Creatures
 			}
 		}
 
+		public static Rotation GetRotation(int x, int y)
+		{
+			if (x == 1)
+			{
+				if (y == 1) return Rotation.RD;
+				else if (y == -1) return Rotation.RU;
+				else return Rotation.R;
+			}
+			else if (x == -1)
+			{
+				if (y == 1) return Rotation.LD;
+				else if (y == -1) return Rotation.LU;
+				else return Rotation.L;
+			}
+			else
+			{
+				if (y == 1) return Rotation.D;
+				else return Rotation.U;
+			}
+		}
+
 		public void GetDirection(out int x, out int y)
 		{
 			float xx, yy;
@@ -73,9 +94,9 @@ namespace CellsAI.Entities.Creatures
 			}
 		}
 
-		public readonly int MaxHealth = 80;
+		public readonly int MaxHealth = 100;
 
-		protected static Texture2D _myTexture;
+		protected Texture2D _myTexture;
 
 		public Creature()
 		{
@@ -93,7 +114,9 @@ namespace CellsAI.Entities.Creatures
 			food.Delete();
 		}
 
-		private void CreateTexture()
+		protected Color _innerColor = new Color(0xff, 0x26, 0x00);
+
+		protected void CreateTexture()
 		{
 			var diam = GameParameters.CELL_SIZE;
 			_myTexture = new Texture2D(MyGame.SprBatch.GraphicsDevice, diam, diam);
@@ -109,7 +132,7 @@ namespace CellsAI.Entities.Creatures
 					var pos = new Vector2(x - rad, y - rad);
 					if (pos.LengthSquared() <= radsq)
 						if (pos.LengthSquared() <= radsq * 0.7)
-							data[ind] = new Color(0xff, 0x26, 0x00);
+							data[ind] = _innerColor;
 						else
 							data[ind] = Color.Black;
 					else
@@ -125,7 +148,7 @@ namespace CellsAI.Entities.Creatures
 		public override void Update()
 		{
 			if (_deleted) return;
-			Health--;
+			Health -= 3;
 			Lifetime++;
 			foreach (var receptor in _receptors)
 				receptor.Receive();
@@ -139,6 +162,7 @@ namespace CellsAI.Entities.Creatures
 			MyGame.World[X, Y].Leave(this);
 			//MyGame.World[X, Y].Enter(new Corpse(X, Y));
 			_deleted = true;
+			_myTexture.Dispose();
 		}
 
 		public void Move(int dx, int dy)
@@ -169,8 +193,10 @@ namespace CellsAI.Entities.Creatures
 				return result;
 			}
 			result += $"Neurons: {GetNetwork().NeuronCount()} \n";
+			result += (GetNetwork() as SimpleNetwork).GetNeuroPresentation(true);
 			result += $"Rotation: {MyRotation}\n";
 			result += $"Health: {Health}\n";
+			result += $"Color: {_innerColor}\n";
 			result += $"Lifetime: {Lifetime}\n";
 			result += "Receptors:\n";
 			foreach (var r in _receptors)

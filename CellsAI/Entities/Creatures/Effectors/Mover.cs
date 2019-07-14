@@ -13,7 +13,7 @@
 
 		public void Perform()
 		{
-			if (Value < 0.0) return;
+			if (Value < 0.6) return;
 			int dx, dy;
 			_creature.GetDirection(out dx, out dy);
 			_creature.Move(dx, dy);

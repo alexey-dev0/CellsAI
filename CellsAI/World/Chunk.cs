@@ -44,7 +44,7 @@ namespace CellsAI.World
 					_cellGrid[i, j] = new Cell(this, noiseHeightMap[j, i], _x * CHUNK_SIZE + i, _y * CHUNK_SIZE + j);
 		}
 
-		private double _foodRate = 0.05;
+		private double _foodRate = 0.07;
 
 		private void GenerateFood()
 		{

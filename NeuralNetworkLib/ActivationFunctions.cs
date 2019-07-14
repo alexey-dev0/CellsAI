@@ -21,5 +21,19 @@ namespace NeuralNetworkLib
 
 		public static double Gaussian(double x)
 			=> Math.Pow(Math.E, -x * x);
+
+		public static Func<double, double> GetRandom()
+		{
+			var r = new Random();
+			var funcs = new Func<double, double>[] {
+				Identity,
+				BinaryStep,
+				Sigmoid,
+				TanH,
+				ArcTan,
+				Gaussian
+			};
+			return funcs[r.Next(funcs.Length)];
+		}
 	}
 }
