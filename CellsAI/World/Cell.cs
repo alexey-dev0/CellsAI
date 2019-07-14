@@ -1,5 +1,4 @@
 ﻿using CellsAI.Entities;
-using CellsAI.Entities.Food;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using static CellsAI.Game.GameParameters;

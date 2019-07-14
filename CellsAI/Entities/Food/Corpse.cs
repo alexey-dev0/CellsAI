@@ -5,7 +5,7 @@ using System;
 
 namespace CellsAI.Entities.Food
 {
-	class Corpse : Eatable
+	internal class Corpse : Eatable
 	{
 		public Corpse(int x, int y, int value = 0) : base(x, y, value)
 		{

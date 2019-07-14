@@ -4,14 +4,14 @@
 	{
 		#region View
 
-		public const int CELL_SIZE = 32;
+		public const int CELL_SIZE = 64;
 		public const int CHUNK_SIZE = 32;
-		private static float _scale = 0.5f;
+		private static float _scale = 0.05f;
 
 		public static float SCALE
 		{
 			get { return _scale; }
-			set { _scale = value <= 0.1f ? 0.1f : value; }
+			set { _scale = value <= 0.05f ? 0.05f : value; }
 		}
 
 		public static float ZOOM_FACTOR

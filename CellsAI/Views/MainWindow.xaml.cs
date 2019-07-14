@@ -22,13 +22,14 @@ namespace CellsAI.Views
 			GameMain.Reset();
 		}
 
-		public void AddSlider(string name, double min, double max, double defVal)
+		public void AddSlider(string name, double min, double max, double defVal, bool integral = false)
 		{
 			var slider = new Slider()
 			{
 				Minimum = min,
 				Maximum = max,
-				Value = defVal
+				Value = defVal,
+				IsSnapToTickEnabled = integral
 			};
 			var textbox = new TextBox() { Width = 40, Text = $"{defVal:F2}" };
 			_sliderBox.Add(slider, textbox);
@@ -45,7 +46,8 @@ namespace CellsAI.Views
 
 		private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_sliderBox[sender as Slider].Text = $"{(sender as Slider).Value:F2}";
+			double value = (sender as Slider).Value;
+			_sliderBox[sender as Slider].Text = value < 0 ? $"1/{-value:F0}" : $"{value:F2}";
 		}
 
 		private static Dictionary<Slider, TextBox> _sliderBox = new Dictionary<Slider, TextBox>();

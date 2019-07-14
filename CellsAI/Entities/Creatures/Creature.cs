@@ -3,29 +3,65 @@ using CellsAI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeuralNetworkLib;
+using System;
 using System.Collections.Generic;
 
 namespace CellsAI.Entities.Creatures
 {
 	public abstract class Creature : Drawable
 	{
-		public enum Rotation
-		{
-			Right,
-			Down,
-			Left,
-			Up
-		}
-
 		protected Brain _brain;
 		protected List<IReceptor> _receptors;
 		protected List<IEffector> _effectors;
 		protected bool _deleted;
 
 		public Rotation MyRotation { get; set; }
+
+		public Vector2 GetDirection()
+		{
+			switch (MyRotation)
+			{
+				case Rotation.R:
+					return new Vector2(1, 0);
+
+				case Rotation.RD:
+					return new Vector2(1, 1);
+
+				case Rotation.D:
+					return new Vector2(0, 1);
+
+				case Rotation.LD:
+					return new Vector2(-1, 1);
+
+				case Rotation.L:
+					return new Vector2(-1, 0);
+
+				case Rotation.LU:
+					return new Vector2(-1, -1);
+
+				case Rotation.U:
+					return new Vector2(0, -1);
+
+				case Rotation.RU:
+					return new Vector2(1, -1);
+
+				default:
+					return Vector2.Zero;
+			}
+		}
+
+		public void GetDirection(out int x, out int y)
+		{
+			float xx, yy;
+			GetDirection().Deconstruct(out xx, out yy);
+			x = (int)xx;
+			y = (int)yy;
+		}
+
 		public int Lifetime;
 
 		protected int _health;
+
 		public int Health
 		{
 			get { return _health; }
@@ -33,11 +69,11 @@ namespace CellsAI.Entities.Creatures
 			{
 				if (_deleted) return;
 				_health = value > MaxHealth ? MaxHealth : value;
-				if (_health <= 0) Delete(); 
+				if (_health <= 0) Delete();
 			}
 		}
 
-		public readonly int MaxHealth = 30;
+		public readonly int MaxHealth = 80;
 
 		protected static Texture2D _myTexture;
 
@@ -48,6 +84,7 @@ namespace CellsAI.Entities.Creatures
 			if (_myTexture == null) CreateTexture();
 			_texture = _myTexture;
 			Health = MaxHealth;
+			MyRotation = (Rotation)new Random().Next(4);
 		}
 
 		public void Eat(Eatable food)
@@ -106,6 +143,7 @@ namespace CellsAI.Entities.Creatures
 
 		public void Move(int dx, int dy)
 		{
+			Health -= dx * dy == 0 ? 2 : 3;
 			if (_deleted) return;
 			MyGame.World[X, Y].Leave(this);
 			X += dx;
@@ -115,8 +153,8 @@ namespace CellsAI.Entities.Creatures
 				Health = 0;
 			else
 				MyGame.World[X, Y].Enter(this);
-			//var food = MyGame.World[X, Y].Content.Find(e => e is Eatable);
-			//if (food != null) Eat(food as Eatable);
+			var food = MyGame.World[X, Y].Content.Find(e => e is Eatable);
+			if (food != null) Eat(food as Eatable);
 		}
 
 		public NeuralNetwork GetNetwork()
@@ -124,14 +162,16 @@ namespace CellsAI.Entities.Creatures
 
 		public override string ToString()
 		{
-			var result = "\nCreature info:\n";
+			var result = $"\nCreature [{GetNetwork().Id}]:\n";
 			if (_deleted)
 			{
 				result += "DELETED";
 				return result;
 			}
 			result += $"Neurons: {GetNetwork().NeuronCount()} \n";
-			result += $"Rotation: {MyRotation}\n"; 
+			result += $"Rotation: {MyRotation}\n";
+			result += $"Health: {Health}\n";
+			result += $"Lifetime: {Lifetime}\n";
 			result += "Receptors:\n";
 			foreach (var r in _receptors)
 			{
@@ -143,7 +183,7 @@ namespace CellsAI.Entities.Creatures
 			result += "Effectors:\n";
 			foreach (var e in _effectors)
 				result += $"    {e.GetType().Name}: {e.Value:f1}\n";
-			return result;
+			return result + "\n";
 		}
 	}
 }

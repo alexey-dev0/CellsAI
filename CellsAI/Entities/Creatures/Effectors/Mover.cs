@@ -13,27 +13,9 @@
 
 		public void Perform()
 		{
-			if (Value < 0.9) return;
-			int dx = 0, dy = 0;
-			switch (_creature.MyRotation)
-			{
-				case Creature.Rotation.Right:
-					dx = 1;
-					break;
-
-				case Creature.Rotation.Down:
-					dy = 1;
-					break;
-
-				case Creature.Rotation.Left:
-					dx = -1;
-					break;
-
-				case Creature.Rotation.Up:
-					dy = -1;
-					break;
-			}
-
+			if (Value < 0.0) return;
+			int dx, dy;
+			_creature.GetDirection(out dx, out dy);
 			_creature.Move(dx, dy);
 		}
 	}

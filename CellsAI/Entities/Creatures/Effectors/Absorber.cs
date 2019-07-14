@@ -16,26 +16,10 @@ namespace CellsAI.Entities.Creatures.Effectors
 
 		public void Perform()
 		{
-			if (Value < 0.5) return;
-			int dx = 0, dy = 0;
-			switch (_creature.MyRotation)
-			{
-				case Creature.Rotation.Right:
-					dx = 1;
-					break;
+			if (Value < 0.1) return;
 
-				case Creature.Rotation.Down:
-					dy = 1;
-					break;
-
-				case Creature.Rotation.Left:
-					dx = -1;
-					break;
-
-				case Creature.Rotation.Up:
-					dy = -1;
-					break;
-			}
+			int dx, dy;
+			_creature.GetDirection(out dx, out dy);
 
 			int vx = _creature.X + dx;
 			int vy = _creature.Y + dy;

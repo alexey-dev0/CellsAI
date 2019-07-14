@@ -28,6 +28,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -120,6 +121,7 @@
     <Compile Include="Entities\Creatures\Effectors\Mover.cs" />
     <Compile Include="Entities\Creatures\Effectors\Rotator.cs" />
     <Compile Include="Entities\Creatures\Receptors\LifeIndicator.cs" />
+    <Compile Include="Entities\Creatures\Rotation.cs" />
     <Compile Include="Entities\Food\Corpse.cs" />
     <Compile Include="Entities\Food\Plant.cs" />
     <Compile Include="Game\GameParameters.cs" />

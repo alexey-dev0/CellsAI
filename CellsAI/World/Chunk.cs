@@ -62,6 +62,7 @@ namespace CellsAI.World
 
 		private void AddFood()
 		{
+			var bugCounter = 0;
 			var r = new Random();
 			int x = r.Next(CHUNK_SIZE);
 			int y = r.Next(CHUNK_SIZE);
@@ -70,6 +71,8 @@ namespace CellsAI.World
 			{
 				x = r.Next(CHUNK_SIZE);
 				y = r.Next(CHUNK_SIZE);
+				if (bugCounter > 100) return;
+				bugCounter++;
 			}
 			var food = new Plant(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
 			_cellGrid[x, y].Enter(food);
@@ -91,7 +94,25 @@ namespace CellsAI.World
 			for (int x = 0; x < CHUNK_SIZE; x++)
 				for (int y = 0; y < CHUNK_SIZE; y++)
 					result[x, y] /= Math.Pow(radius * 2 + 1, 2);
+			// Island
+			//for (int x = 0; x < CHUNK_SIZE; x++)
+			//	for (int y = 0; y < CHUNK_SIZE; y++)
+			//	{
+			//		result[y, x] *= GetFading(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
+			//		if (result[y, x] < 0.6) result[y, x] *= 1.1;
+			//		else if (result[y, x] > 0.6) result[y, x] *= 0.9;
+			//	}
 			return result;
+		}
+
+		private double GetFading(int x, int y)
+		{
+			double sqr = x * x + y * y;
+			sqr = 20000 - sqr;
+			if (sqr < 0) return 0.0;
+			sqr /= 20000;
+			//sqr *= sqr;
+			return 1.2 * sqr;
 		}
 
 		public Texture2D GetTexture(GraphicsDevice graphics)
@@ -118,7 +139,7 @@ namespace CellsAI.World
 					_gTex = new Texture2D(MyGame.SprBatch.GraphicsDevice, sz, sz);
 					var data = new Color[(int)Math.Pow(sz, 2)];
 					for (int i = 0; i < data.Length; i++)
-							data[i] = new Color(0, 0, 0, 70);
+						data[i] = new Color(0, 0, 0, 70);
 					_gTex.SetData(data);
 				}
 				return _gTex;
@@ -167,7 +188,7 @@ namespace CellsAI.World
 				int eX = (entity.X % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE;
 				int eY = (entity.Y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE;
 				var entityPos = new Vector2(eX, eY) * CELL_SIZE * SCALE;
-				float rot = entity is Creature ? MathHelper.PiOver2 * (int)(entity as Creature).MyRotation : 0f;
+				float rot = entity is Creature ? MathHelper.PiOver4 * (int)(entity as Creature).MyRotation : 0f;
 				var offset = new Vector2(CELL_SIZE * 0.5f);
 				MyGame.SprBatch.Draw(
 					texture: entity.GetTexture(),
@@ -199,8 +220,10 @@ namespace CellsAI.World
 		{
 			get
 			{
-				x = (x + CHUNK_SIZE) % CHUNK_SIZE;
-				y = (y + CHUNK_SIZE) % CHUNK_SIZE;
+				var tx = (x + CHUNK_SIZE) % CHUNK_SIZE;
+				var ty = (y + CHUNK_SIZE) % CHUNK_SIZE;
+				if (tx != x || ty != y) throw new Exception();
+
 				return _cellGrid[x, y];
 			}
 		}

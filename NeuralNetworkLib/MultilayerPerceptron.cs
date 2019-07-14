@@ -11,8 +11,13 @@ namespace NeuralNetworkLib
 		private Func<double, double> _func;
 
 		public MultilayerPerceptron(int inputCount, int outputCount, Func<double, double> func)
-			: base(inputCount, outputCount)
 		{
+			_input = new List<Neuron>();
+			_output = new List<Neuron>();
+			while (inputCount-- > 0)
+				_input.Add(new Neuron(Neuron.NeuronType.Input));
+			while (outputCount-- > 0)
+				_output.Add(new Neuron(Neuron.NeuronType.Output, func));
 			_hidden = new List<List<Neuron>>();
 			_func = func;
 		}
@@ -129,7 +134,7 @@ namespace NeuralNetworkLib
 			int result = 0;
 			foreach (var l in _hidden)
 				result += l.Count;
-			return result;
+			return result + _output.Count;
 		}
 	}
 }

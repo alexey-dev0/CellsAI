@@ -75,7 +75,7 @@ namespace CellsAI.World
 			if (pressed && chunk[vx, vy].Content.Count > 0) chunk[vx, vy].Leave(chunk[vx, vy].Content[0]);
 
 			MyGame.SprBatch.End();
-			//Game.DebugInfo.DebugMessage += $"CHUNKS: {_chunks.Count}\n";
+			Game.DebugInfo.DebugMessage += $"CHUNKS: {_chunks.Count}\n";
 		}
 
 		private Chunk GetChunk(int x, int y)

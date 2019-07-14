@@ -11,12 +11,14 @@ namespace CellsAI.Game
 		private int _frames;
 		private int _liveFrames;
 		private TimeSpan _timeElapsed;
+		private MyGame _game;
 
 		public static SpriteFont DefaultFont;
 		public static string DebugMessage { get; set; } = "";
 
 		public DebugInfo(WpfGame game) : base(game)
 		{
+			_game = game as MyGame;
 		}
 
 		protected override void LoadContent()
@@ -43,8 +45,9 @@ namespace CellsAI.Game
 			_liveFrames++;
 			_spriteBatch.Begin();
 			DebugMessage += $"FPS: {_frames}\n";
-			_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(6), Color.Black);
-			_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(5), Color.White);
+			_game.Win.DebugInfo.Text = DebugMessage;
+			//_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(6), Color.Black);
+			//_spriteBatch.DrawString(DefaultFont, DebugMessage, new Vector2(5), Color.White);
 			DebugMessage = "";
 			_spriteBatch.End();
 		}

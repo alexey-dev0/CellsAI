@@ -19,7 +19,9 @@
 		<game:MyGame x:Name="GameMain" Grid.Column="0" />
 
 		<StackPanel x:Name="StackPnl" Grid.Column="1">
-			<Button x:Name="Reset" Height="40" Margin="20" Click="Reset_Click">Reset</Button>
+			<Button x:Name="Reset" Height="40" Click="Reset_Click" Margin="10">Reset</Button>
+			<CheckBox x:Name="DrawSwitch" IsChecked="True" Margin="10">Enable drawing</CheckBox>
+			<TextBlock x:Name="DebugInfo" Margin="10" Background="LightYellow">Debug</TextBlock>
 		</StackPanel>
 	</Grid>
 </Window>

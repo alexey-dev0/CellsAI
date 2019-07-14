@@ -46,13 +46,13 @@ namespace CellsAI.Game
 			_mouse = new WpfMouse(this);
 			_controller = new CreatureController();
 
-			Win.AddSlider("Scale", 1, 100, 20);
-			Win.AddSlider("Octaves", 1, 8, 4);
-			Win.AddSlider("Persistance", 0.1, 2.0, 0.3);
-			Win.AddSlider("Lacunarity", 1, 10, 3);
-			Win.AddSlider("NoiseHeight", 0, 2, 1);
+			//Win.AddSlider("Scale", 1, 100, 70);
+			//Win.AddSlider("Octaves", 1, 8, 4);
+			//Win.AddSlider("Persistance", 0.1, 2.0, 0.3);
+			//Win.AddSlider("Lacunarity", 1, 10, 3);
+			//Win.AddSlider("NoiseHeight", 0, 2, 1);
 
-			Win.AddSlider("UpdatePerFrame", 1, 5, 1);
+			Win.AddSlider("UpdatePerFrame", -100, 100, 1, true);
 
 			Reset();
 
@@ -61,8 +61,8 @@ namespace CellsAI.Game
 
 		private static OpenSimplexNoise _generator = new OpenSimplexNoise
 		{
-			Scale = 40,
-			Octaves = 5,
+			Scale = 70,
+			Octaves = 4,
 			Persistance = 0.3,
 			Lacunarity = 3,
 			NoiseHeight = 1
@@ -70,9 +70,11 @@ namespace CellsAI.Game
 
 		protected override void LoadContent()
 		{
-			_controller.AddCreatures(40);
+			_controller.AddCreatures(100);
 			base.LoadContent();
 		}
+
+		private int _counter;
 
 		protected override void Update(GameTime time)
 		{
@@ -85,22 +87,35 @@ namespace CellsAI.Game
 			if (keyboardState.IsKeyDown(Keys.D)) _x += velocity;
 			SCALE = 1 + _mouse.GetState().ScrollWheelValue / 1000.0f;
 
-			for (int i = 0; i < MainWindow.Sliders["UpdatePerFrame"].Value; i++)
-				_controller.Update();
+			int updateVal = (int)MainWindow.Sliders["UpdatePerFrame"].Value;
+
+			if (updateVal < 0)
+			{
+				if (_counter == 0) _controller.Update();
+				_counter = (_counter + 1) % -updateVal;
+			}
+			else
+			{
+				for (int i = 0; i < updateVal; i++)
+					_controller.Update();
+			}
 
 			base.Update(time);
 		}
 
 		protected override void Draw(GameTime time)
 		{
-			_graphics.GraphicsDevice.Clear(Color.Purple);
-			int vx = _mouse.GetState().X;
-			int vy = _mouse.GetState().Y;
+			if (Win.DrawSwitch.IsChecked ?? false)
+			{
+				_graphics.GraphicsDevice.Clear(Color.Purple);
+				int vx = _mouse.GetState().X;
+				int vy = _mouse.GetState().Y;
 
-			World.ViewX = _x;
-			World.ViewY = _y;
-			World.Draw(vx, vy, _mouse.GetState().RightButton == ButtonState.Pressed);
-
+				World.ViewX = _x;
+				World.ViewY = _y;
+				World.Draw(vx, vy, _mouse.GetState().RightButton == ButtonState.Pressed);
+			}
+			_controller.CanDebug = true;
 			base.Draw(time);
 		}
 
@@ -108,14 +123,14 @@ namespace CellsAI.Game
 		{
 			if (World == null) return;
 
-			_generator = new OpenSimplexNoise(13)
-			{
-				Scale = MainWindow.Sliders["Scale"].Value,
-				Octaves = (int)MainWindow.Sliders["Octaves"].Value,
-				Persistance = MainWindow.Sliders["Persistance"].Value,
-				Lacunarity = MainWindow.Sliders["Lacunarity"].Value,
-				NoiseHeight = MainWindow.Sliders["NoiseHeight"].Value
-			};
+			//_generator = new OpenSimplexNoise()
+			//{
+			//	Scale = MainWindow.Sliders["Scale"].Value,
+			//	Octaves = (int)MainWindow.Sliders["Octaves"].Value,
+			//	Persistance = MainWindow.Sliders["Persistance"].Value,
+			//	Lacunarity = MainWindow.Sliders["Lacunarity"].Value,
+			//	NoiseHeight = MainWindow.Sliders["NoiseHeight"].Value
+			//};
 
 			World.Dispose();
 			World = new Map(_generator);

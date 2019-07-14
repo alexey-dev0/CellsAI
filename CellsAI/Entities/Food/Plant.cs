@@ -8,6 +8,7 @@ namespace CellsAI.Entities.Food
 	public class Plant : Eatable
 	{
 		private static Texture2D _myTexture;
+
 		public Plant(int x, int y, int value = 0) : base(x, y, value)
 		{
 			if (_myTexture == null) CreateTexture();
