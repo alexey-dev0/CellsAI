@@ -6,7 +6,7 @@ namespace CellsAI.Entities.Creatures.Receptors
 {
 	class NearbyLook : IReceptor
 	{
-		private const int VISIBILITY = 4;
+		private const int VISIBILITY = 6;
 		private Creature _creature;
 
 		public List<double> Values { get; }

@@ -6,7 +6,7 @@ namespace CellsAI.Entities.Creatures.Receptors
 {
 	public class StraightLook : IReceptor
 	{
-		private const int VISIBILITY = 8;
+		private const int VISIBILITY = 6;
 		private Creature _creature;
 
 		public List<double> Values { get; }

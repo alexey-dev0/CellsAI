@@ -24,6 +24,7 @@ namespace CellsAI.Entities.Creatures
 			}
 			_brain = new Brain(_receptors, _effectors, network);
 			_innerColor = GetColor(_brain.GetNetwork().Id);
+			if (_myTexture != null) _myTexture.Dispose();
 			CreateTexture();
 			_texture = _myTexture;
 		}

@@ -95,13 +95,13 @@ namespace CellsAI.World
 				for (int y = 0; y < CHUNK_SIZE; y++)
 					result[x, y] /= Math.Pow(radius * 2 + 1, 2);
 			// Island
-			//for (int x = 0; x < CHUNK_SIZE; x++)
-			//	for (int y = 0; y < CHUNK_SIZE; y++)
-			//	{
-			//		result[y, x] *= GetFading(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
-			//		if (result[y, x] < 0.6) result[y, x] *= 1.1;
-			//		else if (result[y, x] > 0.6) result[y, x] *= 0.9;
-			//	}
+			for (int x = 0; x < CHUNK_SIZE; x++)
+				for (int y = 0; y < CHUNK_SIZE; y++)
+				{
+					result[y, x] *= GetFading(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
+					if (result[y, x] < 0.6) result[y, x] *= 1.1;
+					else if (result[y, x] > 0.6) result[y, x] *= 0.9;
+				}
 			return result;
 		}
 

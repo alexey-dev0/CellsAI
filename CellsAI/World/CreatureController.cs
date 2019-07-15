@@ -108,22 +108,24 @@ namespace CellsAI.World
 
 		private Vector2 AddCreature(Vector2 pos, Random r, NeuralNetwork network = null, int changeCount = 0)
 		{
-			//int counterBug = 0;
+			int counterBug = 0;
 			int x = (int)pos.X;
 			int y = (int)pos.Y;
 			while (MyGame.World[x, y].MyType != Cell.CellType.Ground
 				|| MyGame.World[x, y].Content.Count > 0)
 			{
-				//counterBug++;
+				counterBug++;
 				x += -40 + r.Next(81);
 				y += -40 + r.Next(81);
+				x %= 200;
+				y %= 200;
 				// if Island
-				//if (counterBug > 100)
-				//{
-				//	x = 0;
-				//	y = 0;
-				//	counterBug = 0;
-				//}
+				if (counterBug > 100)
+				{
+					x = 0;
+					y = 0;
+					counterBug = 0;
+				}
 			}
 			var creature = new SimpleCreature(x, y, network, changeCount);
 			MyGame.World[x, y].Enter(creature);
