@@ -18,5 +18,12 @@
 			=> SCALE * CHUNK_SIZE * CELL_SIZE;
 
 		#endregion View
+
+		#region Game
+
+		public static MyGame GAME;
+		public const int ISLAND_SIZE = 10000;
+
+		#endregion Game
 	}
 }

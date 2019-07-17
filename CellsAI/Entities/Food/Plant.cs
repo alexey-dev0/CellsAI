@@ -1,7 +1,7 @@
-﻿using CellsAI.Game;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.Entities.Food
 {
@@ -9,7 +9,7 @@ namespace CellsAI.Entities.Food
 	{
 		private static Texture2D _myTexture;
 
-		public Plant(int x, int y, int value = 0) : base(x, y, value)
+		public Plant(int x, int y) : base(x, y, 100)
 		{
 			if (_myTexture == null) CreateTexture();
 			_texture = _myTexture;
@@ -18,8 +18,8 @@ namespace CellsAI.Entities.Food
 		private void CreateTexture()
 		{
 			var r = new Random();
-			var diam = GameParameters.CELL_SIZE;
-			_myTexture = new Texture2D(MyGame.SprBatch.GraphicsDevice, diam, diam);
+			var diam = CELL_SIZE;
+			_myTexture = new Texture2D(GAME.SprBatch.GraphicsDevice, diam, diam);
 			var data = new Color[diam * diam];
 
 			float rad = diam / 2f;

@@ -2,10 +2,16 @@
 
 namespace CellsAI.Entities.Creatures
 {
-	public interface IReceptor
+	public abstract class IReceptor
 	{
-		List<double> Values { get; }
+		protected readonly Creature _creature;
+		public List<double> Values { get; protected set; }
 
-		void Receive();
+		protected IReceptor(Creature creature)
+		{
+			_creature = creature;
+		}
+
+		public abstract void Receive();
 	}
 }

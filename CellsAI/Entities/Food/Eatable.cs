@@ -1,41 +1,29 @@
-﻿using CellsAI.Game;
-
-namespace CellsAI.Entities.Food
+﻿namespace CellsAI.Entities.Food
 {
 	public abstract class Eatable : Drawable
 	{
-		private int _foodValue;
-		private bool _deleted;
+		private readonly int _foodValue;
 
 		// [1..100]
 		public int FoodValue
 		{
 			get
 			{
-				if (!_deleted)
+				if (!IsDeleted)
 					return _foodValue;
 				else
 					throw new System.Exception();
 			}
 		}
 
-		public Eatable(int x, int y, int value = 0)
+		public Eatable(int x, int y, int value) : base(x, y)
 		{
-			X = x;
-			Y = y;
-
-			_foodValue = 100;//value <= 0 ? new Random(MyGame.Seed).Next(1, 100) : value;
+			_foodValue = value;
 		}
 
 		public override string ToString()
 		{
-			return $"Food {X}, {Y} {_deleted}";
-		}
-
-		public void Delete()
-		{
-			MyGame.World[X, Y].Leave(this);
-			_deleted = true;
+			return $"Food {X}, {Y} {IsDeleted}";
 		}
 	}
 }

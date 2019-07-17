@@ -6,10 +6,10 @@ namespace NeuralNetworkLib
 {
 	public class SimpleNetwork : NeuralNetwork
 	{
-		private List<List<double>> _values;
-		private List<List<List<double>>> _weights;
-		private Func<double, double> _func;
-		private Random _rand;
+		private readonly List<List<double>> _values;
+		private readonly List<List<List<double>>> _weights;
+		private readonly Func<double, double> _func;
+		private readonly Random _rand;
 
 		public SimpleNetwork(int input, int output, Func<double, double> func, params int[] hidden)
 		{
@@ -142,7 +142,7 @@ namespace NeuralNetworkLib
 
 		public string GetNeuroPresentation(bool showValues)
 		{
-			if (_myRepresentation != null) return _myRepresentation;
+			//if (_myRepresentation != null) return _myRepresentation;
 			int height = 0;
 			foreach (var l in _values)
 				height = Math.Max(height, l.Count);

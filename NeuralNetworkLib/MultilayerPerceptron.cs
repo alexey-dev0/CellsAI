@@ -5,10 +5,10 @@ namespace NeuralNetworkLib
 {
 	public class MultilayerPerceptron : NeuralNetwork
 	{
-		private List<List<Neuron>> _hidden;
+		private readonly List<List<Neuron>> _hidden;
 
 		// Activation functions
-		private Func<double, double> _func;
+		private readonly Func<double, double> _func;
 
 		public MultilayerPerceptron(int inputCount, int outputCount, Func<double, double> func)
 		{

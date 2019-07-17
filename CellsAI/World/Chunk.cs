@@ -1,7 +1,5 @@
 ﻿using CellsAI.Entities;
-using CellsAI.Entities.Creatures;
 using CellsAI.Entities.Food;
-using CellsAI.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProceduralGenerationLib;
@@ -18,7 +16,7 @@ namespace CellsAI.World
 		private readonly int _y;
 		private readonly Cell[,] _cellGrid;
 		private Texture2D _texture;
-		private List<Drawable> _content;
+		private readonly List<Drawable> _content;
 
 		public Chunk(OpenSimplexNoise generator, int x, int y)
 		{
@@ -29,7 +27,6 @@ namespace CellsAI.World
 			_content = new List<Drawable>();
 
 			Generate();
-			GenerateFood();
 		}
 
 		public Chunk(OpenSimplexNoise generator, Vector2 position)
@@ -38,26 +35,23 @@ namespace CellsAI.World
 
 		private void Generate()
 		{
-			var noiseHeightMap = smoothNoise();
+			var noiseHeightMap = SmoothNoise();
 			for (int i = 0; i < CHUNK_SIZE; i++)
 				for (int j = 0; j < CHUNK_SIZE; j++)
 					_cellGrid[i, j] = new Cell(this, noiseHeightMap[j, i], _x * CHUNK_SIZE + i, _y * CHUNK_SIZE + j);
 		}
 
-		private double _foodRate = 0.07;
+		private readonly double _foodRate = 0.05;
 
-		private void GenerateFood()
+		public void GenerateFood()
 		{
-			var r = new Random(MyGame.Seed);
+			var r = new Random(GAME.Seed);
 			for (int x = 0; x < CHUNK_SIZE; x++)
 				for (int y = 0; y < CHUNK_SIZE; y++)
 					if (r.NextDouble() < _foodRate
 						&& _cellGrid[x, y].MyType == Cell.CellType.Ground
 						&& _cellGrid[x, y].Content.Count == 0)
-					{
-						var food = new Plant(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
-						_cellGrid[x, y].Enter(food);
-					}
+						new Plant(_x * CHUNK_SIZE + x, _y * CHUNK_SIZE + y);
 		}
 
 		private void AddFood()
@@ -78,7 +72,7 @@ namespace CellsAI.World
 			_cellGrid[x, y].Enter(food);
 		}
 
-		private double[,] smoothNoise()
+		private double[,] SmoothNoise()
 		{
 			var result = new double[CHUNK_SIZE, CHUNK_SIZE];
 			var radius = 1;
@@ -108,9 +102,9 @@ namespace CellsAI.World
 		private double GetFading(int x, int y)
 		{
 			double sqr = x * x + y * y;
-			sqr = 20000 - sqr;
+			sqr = ISLAND_SIZE - sqr;
 			if (sqr < 0) return 0.0;
-			sqr /= 20000;
+			sqr /= ISLAND_SIZE;
 			//sqr *= sqr;
 			return 1.2 * sqr;
 		}
@@ -136,7 +130,7 @@ namespace CellsAI.World
 				if (_gTex == null)
 				{
 					int sz = CELL_SIZE;
-					_gTex = new Texture2D(MyGame.SprBatch.GraphicsDevice, sz, sz);
+					_gTex = new Texture2D(GAME.SprBatch.GraphicsDevice, sz, sz);
 					var data = new Color[(int)Math.Pow(sz, 2)];
 					for (int i = 0; i < data.Length; i++)
 						data[i] = new Color(0, 0, 0, 70);
@@ -148,7 +142,7 @@ namespace CellsAI.World
 
 		public void DrawGrid(Vector2 position, Vector2 subPos)
 		{
-			MyGame.SprBatch.Draw(
+			GAME.SprBatch.Draw(
 				texture: GridTexture,
 				position: position,
 				sourceRectangle: null,
@@ -157,8 +151,8 @@ namespace CellsAI.World
 				origin: Vector2.Zero,
 				scale: new Vector2(SCALE * CHUNK_SIZE),
 				effects: SpriteEffects.None,
-				layerDepth: 0f);
-			MyGame.SprBatch.Draw(
+				layerDepth: 0.9f);
+			GAME.SprBatch.Draw(
 				texture: GridTexture,
 				position: position + subPos * CELL_SIZE * SCALE,
 				sourceRectangle: null,
@@ -167,13 +161,13 @@ namespace CellsAI.World
 				origin: Vector2.Zero,
 				scale: new Vector2(SCALE),
 				effects: SpriteEffects.None,
-				layerDepth: 0f);
+				layerDepth: 1.0f);
 		}
 
 		public void Draw(Vector2 position)
 		{
-			MyGame.SprBatch.Draw(
-				texture: GetTexture(MyGame.SprBatch.GraphicsDevice),
+			GAME.SprBatch.Draw(
+				texture: GetTexture(GAME.SprBatch.GraphicsDevice),
 				position: position,
 				sourceRectangle: null,
 				color: Color.White,
@@ -182,37 +176,12 @@ namespace CellsAI.World
 				scale: new Vector2(CELL_SIZE * SCALE),
 				effects: SpriteEffects.None,
 				layerDepth: 0f);
-			//MyGame.SprBatch.DrawString(DebugInfo.DefaultFont, $"{_x}, {_y}", position, Color.White);
 			foreach (var entity in _content)
 			{
 				int eX = (entity.X % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE;
 				int eY = (entity.Y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE;
 				var entityPos = new Vector2(eX, eY) * CELL_SIZE * SCALE;
-				float rot = entity is Creature ? MathHelper.PiOver4 * (int)(entity as Creature).MyRotation : 0f;
-				var offset = new Vector2(CELL_SIZE * 0.5f);
-				MyGame.SprBatch.Draw(
-					texture: entity.GetTexture(),
-					position: position + entityPos + offset * SCALE,
-					sourceRectangle: null,
-					color: Color.White,
-					rotation: rot,
-					origin: offset,
-					scale: new Vector2(SCALE),
-					effects: SpriteEffects.None,
-					layerDepth: 0f);
-				//MyGame.SprBatch.DrawString(
-				//	DebugInfo.DefaultFont,
-				//	$"{eX}, {eY}",
-				//	position + entityPos - new Vector2(-5),
-				//	Color.White);
-			}
-		}
-
-		public void Update() // Seems no reason
-		{
-			foreach (var entity in _content)
-			{
-				entity.Update();
+				entity.Draw(position + entityPos);
 			}
 		}
 
@@ -238,7 +207,7 @@ namespace CellsAI.World
 		{
 			if (_content.Contains(entity))
 			{
-				if (entity is Eatable)
+				if (entity is Plant)
 					AddFood();
 				_content.Remove(entity);
 			}

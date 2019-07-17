@@ -1,22 +1,19 @@
-﻿namespace CellsAI.Entities.Creatures.Effectors
+﻿using static CellsAI.Game.GameParameters;
+
+namespace CellsAI.Entities.Creatures.Effectors
 {
 	internal class Mover : IEffector
 	{
-		private Creature _creature;
-
-		public double Value { get; set; }
-
-		public Mover(Creature creature)
+		public Mover(Creature creature) : base(creature)
 		{
-			_creature = creature;
 		}
 
-		public void Perform()
+		public override void Perform()
 		{
 			if (Value < 0.6) return;
-			int dx, dy;
-			_creature.GetDirection(out dx, out dy);
-			_creature.Move(dx, dy);
+			_creature.GetDirection(out int dx, out int dy);
+			if (!GAME.World[_creature.X + dx, _creature.Y + dy].Content.Exists(e => e is Creature))
+				_creature.Move(dx, dy);
 		}
 	}
 }

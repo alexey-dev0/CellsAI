@@ -34,12 +34,12 @@ namespace NeuralNetworkLib
 			}
 		}
 
-		private List<Neuron> _parents;
-		private List<double> _weights;
-		private List<Neuron> _children;
-		private NeuronType _type;
-		private Func<double, double> _activationFunc;
-		private Random _rand;
+		private readonly List<Neuron> _parents;
+		private readonly List<double> _weights;
+		private readonly List<Neuron> _children;
+		private readonly NeuronType _type;
+		private readonly Func<double, double> _activationFunc;
+		private readonly Random _rand;
 
 		public Neuron(NeuronType type = NeuronType.Hidden)
 		{
