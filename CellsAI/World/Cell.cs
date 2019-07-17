@@ -7,8 +7,8 @@ namespace CellsAI.World
 {
 	public class Cell
 	{
-		private int _x;
-		private int _y;
+		private readonly int _x;
+		private readonly int _y;
 
 		public enum CellType
 		{
@@ -102,13 +102,13 @@ namespace CellsAI.World
 
 		public override string ToString()
 		{
-			var result = $"Cell info:\n";
-			result += $"Global: {_x}, {_y}\n";
-			result += $"Local:  {_x % CHUNK_SIZE}, {_y % CHUNK_SIZE}\n";
-			result += $"Type: {MyType} ({(int)MyType / 3.0})\n";
+			var result = $"\nCell info:\n";
+			result += $"    Global: {_x}, {_y}\n";
+			result += $"    Local:  {_x % CHUNK_SIZE}, {_y % CHUNK_SIZE}\n";
+			result += $"    Type: {MyType} ({(int)MyType / 3.0:F1})\n";
 			result += $"Content:\n";
-			if (Content.Count == 0) result += "-\n";
-			else foreach (var e in Content) result += $"{e.GetType().Name} {{{e.ToString()}}}\n";
+			if (Content.Count == 0) result += "	-\n";
+			else foreach (var e in Content) result += $"{e.ToString()}\n";
 			return result;
 		}
 	}

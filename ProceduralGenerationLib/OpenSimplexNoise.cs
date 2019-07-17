@@ -15,10 +15,10 @@ namespace ProceduralGenerationLib
 		private const double SQUISH_2D = 0.366025403784439;      //(Math.sqrt(2+1)-1)/2;
 		private const double NORM_2D = 47.0;
 
-		private byte[] perm;
-		private byte[] perm2D;
+		private readonly byte[] perm;
+		private readonly byte[] perm2D;
 
-		private static double[] gradients2D = new double[]
+		private static readonly double[] gradients2D = new double[]
 		{
 			 5,  2,    2,  5,
 			-5,  2,   -2,  5,
@@ -26,7 +26,7 @@ namespace ProceduralGenerationLib
 			-5, -2,   -2, -5,
 		};
 
-		private static Contribution2[] lookup2D;
+		private static readonly Contribution2[] lookup2D;
 
 		private class Contribution2
 		{
@@ -265,7 +265,7 @@ namespace ProceduralGenerationLib
 		public double Lacunarity { get; set; }
 		public double NoiseHeight { get; set; }
 
-		private long _seed = 0;
+		private readonly long _seed = 0;
 
 		public double EvaluateNorm(double x, double y, Vector2[] octaveOffsets)
 		{

@@ -2,16 +2,11 @@
 {
 	internal class Rotator : IEffector
 	{
-		private Creature _creature;
-
-		public double Value { get; set; }
-
-		public Rotator(Creature creature)
+		public Rotator(Creature creature) : base(creature)
 		{
-			_creature = creature;
 		}
 
-		public void Perform()
+		public override void Perform()
 		{
 			if (Value <= 0.4) _creature.MyRotation--;
 			else if (Value >= 0.6) _creature.MyRotation++;

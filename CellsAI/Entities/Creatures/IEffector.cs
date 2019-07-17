@@ -1,9 +1,16 @@
 ﻿namespace CellsAI.Entities.Creatures
 {
-	public interface IEffector
+	public abstract class IEffector
 	{
-		double Value { get; set; }
+		protected readonly Creature _creature;
 
-		void Perform();
+		public double Value { get; set; }
+
+		protected IEffector(Creature creature)
+		{
+			_creature = creature;
+		}
+
+		public abstract void Perform();
 	}
 }

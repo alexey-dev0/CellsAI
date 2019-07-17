@@ -4,17 +4,12 @@ namespace CellsAI.Entities.Creatures.Receptors
 {
 	internal class LifeIndicator : IReceptor
 	{
-		private Creature _creature;
-
-		public List<double> Values { get; set; }
-
-		public LifeIndicator(Creature creature)
+		public LifeIndicator(Creature creature) : base(creature)
 		{
-			_creature = creature;
 			Values = new List<double>() { 0 };
 		}
 
-		public void Receive()
+		public override void Receive()
 		{
 			Values[0] = _creature.Health / (double)_creature.MaxHealth;
 		}

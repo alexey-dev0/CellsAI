@@ -1,22 +1,25 @@
-﻿using CellsAI.Game;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.Entities.Food
 {
 	internal class Corpse : Eatable
 	{
-		public Corpse(int x, int y, int value = 0) : base(x, y, value)
+		private static Texture2D _myTexture;
+
+		public Corpse(int x, int y) : base(x, y, 20)
 		{
-			CreateTexture();
+			if (_myTexture == null) CreateTexture();
+			_texture = _myTexture;
 		}
 
 		private void CreateTexture()
 		{
-			var r = new Random(MyGame.Seed);
-			var diam = GameParameters.CELL_SIZE;
-			_texture = new Texture2D(MyGame.SprBatch.GraphicsDevice, diam, diam);
+			var r = new Random(GAME.Seed);
+			var diam = CELL_SIZE;
+			_myTexture = new Texture2D(GAME.SprBatch.GraphicsDevice, diam, diam);
 			var data = new Color[diam * diam];
 
 			float rad = diam / 2f;
@@ -36,7 +39,7 @@ namespace CellsAI.Entities.Food
 						data[ind] = Color.Transparent;
 				}
 
-			_texture.SetData(data);
+			_myTexture.SetData(data);
 		}
 	}
 }

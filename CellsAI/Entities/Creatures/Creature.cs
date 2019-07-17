@@ -1,10 +1,12 @@
 ﻿using CellsAI.Entities.Food;
-using CellsAI.Game;
+using CellsAI.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeuralNetworkLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.Entities.Creatures
 {
@@ -13,7 +15,7 @@ namespace CellsAI.Entities.Creatures
 		protected Brain _brain;
 		protected List<IReceptor> _receptors;
 		protected List<IEffector> _effectors;
-		protected bool _deleted;
+		public Spawner MySpawner;
 
 		public Rotation MyRotation { get; set; }
 
@@ -73,8 +75,7 @@ namespace CellsAI.Entities.Creatures
 
 		public void GetDirection(out int x, out int y)
 		{
-			float xx, yy;
-			GetDirection().Deconstruct(out xx, out yy);
+			GetDirection().Deconstruct(out float xx, out float yy);
 			x = (int)xx;
 			y = (int)yy;
 		}
@@ -88,20 +89,23 @@ namespace CellsAI.Entities.Creatures
 			get { return _health; }
 			set
 			{
-				if (_deleted) return;
+				if (IsDeleted) return;
 				_health = value > MaxHealth ? MaxHealth : value;
 				if (_health <= 0) Delete();
 			}
 		}
 
-		public readonly int MaxHealth = 100;
+		public readonly int MaxHealth = 300;
 
 		protected Texture2D _myTexture;
 
-		public Creature()
+		public Creature(int x, int y, Spawner spawner)
+			: base(x, y)
 		{
+			MySpawner = spawner;
 			_receptors = new List<IReceptor>();
 			_effectors = new List<IEffector>();
+			MyColor = new Color(spawner.MyColor, 200);
 			if (_myTexture == null) CreateTexture();
 			_texture = _myTexture;
 			Health = MaxHealth;
@@ -114,12 +118,12 @@ namespace CellsAI.Entities.Creatures
 			food.Delete();
 		}
 
-		protected Color _innerColor = new Color(0xff, 0x26, 0x00);
+		public Color MyColor = new Color(0xff, 0x26, 0x00);
 
 		protected void CreateTexture()
 		{
-			var diam = GameParameters.CELL_SIZE;
-			_myTexture = new Texture2D(MyGame.SprBatch.GraphicsDevice, diam, diam);
+			var diam = CELL_SIZE;
+			_myTexture = new Texture2D(GAME.SprBatch.GraphicsDevice, diam, diam);
 			var data = new Color[diam * diam];
 
 			float rad = diam / 2f;
@@ -132,7 +136,7 @@ namespace CellsAI.Entities.Creatures
 					var pos = new Vector2(x - rad, y - rad);
 					if (pos.LengthSquared() <= radsq)
 						if (pos.LengthSquared() <= radsq * 0.7)
-							data[ind] = _innerColor;
+							data[ind] = MyColor;
 						else
 							data[ind] = Color.Black;
 					else
@@ -145,40 +149,65 @@ namespace CellsAI.Entities.Creatures
 			_myTexture.SetData(data);
 		}
 
-		public override void Update()
+		public override void Draw(Vector2 position)
 		{
-			if (_deleted) return;
-			Health -= 3;
-			Lifetime++;
-			foreach (var receptor in _receptors)
-				receptor.Receive();
-			_brain.Update();
-			foreach (var effector in _effectors)
-				effector.Perform();
+			var offset = new Vector2(CELL_SIZE * 0.5f);
+			var rot = MathHelper.PiOver4 * (int)MyRotation;
+			GAME.SprBatch.Draw(
+					texture: _texture,
+					position: position + offset * SCALE,
+					sourceRectangle: null,
+					color: Color.White,
+					rotation: rot,
+					origin: offset,
+					scale: new Vector2(SCALE),
+					effects: SpriteEffects.None,
+					layerDepth: 0.6f);
 		}
 
-		private void Delete()
+		public override void Update()
 		{
-			MyGame.World[X, Y].Leave(this);
-			//MyGame.World[X, Y].Enter(new Corpse(X, Y));
-			_deleted = true;
+			Health -= 3;
+			if (IsDeleted) return;
+			Lifetime++;
+			foreach (var receptor in _receptors)
+			{
+				if (IsDeleted) return;
+				receptor.Receive();
+			}
+			_brain.Update();
+			foreach (var effector in _effectors)
+			{
+				if (IsDeleted) return;
+				effector.Perform();
+			}
+		}
+
+		public override void Delete()
+		{
+			//var cell = GAME.World[X, Y];
+			//if (!cell.Content.Exists(e => e is Corpse))
+			//	cell.Enter(new Corpse(X, Y));
+			base.Delete();
 			_myTexture.Dispose();
 		}
 
 		public void Move(int dx, int dy)
 		{
 			Health -= dx * dy == 0 ? 2 : 3;
-			if (_deleted) return;
-			MyGame.World[X, Y].Leave(this);
+			if (IsDeleted) return;
 			X += dx;
 			Y += dy;
-			// TODO
-			if (MyGame.World[X, Y].MyType == World.Cell.CellType.Water)
-				Health = 0;
-			else
-				MyGame.World[X, Y].Enter(this);
-			var food = MyGame.World[X, Y].Content.Find(e => e is Eatable);
-			if (food != null) Eat(food as Eatable);
+			if (GAME.World[X, Y].MyType == World.Cell.CellType.Water)
+				Health -= 10;
+		}
+
+		public void Attack(Creature other)
+		{
+			int damage = 50;
+			other.Health -= damage;
+			Health += damage;
+			if (other.Health <= 0) Debug.WriteLine("Assault happens!");
 		}
 
 		public NeuralNetwork GetNetwork()
@@ -186,18 +215,18 @@ namespace CellsAI.Entities.Creatures
 
 		public override string ToString()
 		{
-			var result = $"\nCreature [{GetNetwork().Id}]:\n";
-			if (_deleted)
+			var result = $"Creature [{GetNetwork().Id}]:\n";
+			if (IsDeleted)
 			{
-				result += "DELETED";
+				result += "    DELETED";
 				return result;
 			}
-			result += $"Neurons: {GetNetwork().NeuronCount()} \n";
 			result += (GetNetwork() as SimpleNetwork).GetNeuroPresentation(true);
-			result += $"Rotation: {MyRotation}\n";
-			result += $"Health: {Health}\n";
-			result += $"Color: {_innerColor}\n";
-			result += $"Lifetime: {Lifetime}\n";
+			result += $"    Neurons: {GetNetwork().NeuronCount()} \n";
+			result += $"    Rotation: {MyRotation}\n";
+			result += $"    Health: {Health}\n";
+			result += $"    Color: {MyColor}\n";
+			result += $"    Lifetime: {Lifetime}\n";
 			result += "Receptors:\n";
 			foreach (var r in _receptors)
 			{
@@ -209,7 +238,7 @@ namespace CellsAI.Entities.Creatures
 			result += "Effectors:\n";
 			foreach (var e in _effectors)
 				result += $"    {e.GetType().Name}: {e.Value:f1}\n";
-			return result + "\n";
+			return result;
 		}
 	}
 }

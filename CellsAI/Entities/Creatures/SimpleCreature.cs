@@ -1,5 +1,6 @@
 ﻿using CellsAI.Entities.Creatures.Effectors;
 using CellsAI.Entities.Creatures.Receptors;
+using CellsAI.World;
 using Microsoft.Xna.Framework;
 using NeuralNetworkLib;
 
@@ -7,26 +8,30 @@ namespace CellsAI.Entities.Creatures
 {
 	internal class SimpleCreature : Creature
 	{
-		public SimpleCreature(int x, int y, NeuralNetwork network = null, int changeCount = 0) : base()
+		public SimpleCreature(int x, int y, Spawner controller, NeuralNetwork network = null, int changeCount = 0)
+			: base(x, y, controller)
 		{
 			_receptors.Add(new StraightLook(this));
 			_receptors.Add(new NearbyLook(this));
 			//_receptors.Add(new LifeIndicator(this));
+			_receptors.Add(new DistantLook(this));
+
 			_effectors.Add(new Rotator(this));
+			_effectors.Add(new Absorber(this));
+			//_effectors.Add(new CellDivisor(this));
 			_effectors.Add(new Mover(this));
-			//_effectors.Add(new Absorber(this));
-			X = x;
-			Y = y;
+			_effectors.Add(new Attacker(this));
+
 			if (network != null)
 			{
 				network = network.Copy();
 				network.RandomChange(changeCount, 1);
 			}
 			_brain = new Brain(_receptors, _effectors, network);
-			_innerColor = GetColor(_brain.GetNetwork().Id);
-			if (_myTexture != null) _myTexture.Dispose();
-			CreateTexture();
-			_texture = _myTexture;
+			//_innerColor = GetColor(_brain.GetNetwork().Id);
+			//if (_myTexture != null) _myTexture.Dispose();
+			//CreateTexture();
+			//_texture = _myTexture;
 		}
 
 		private Color GetColor(string id)

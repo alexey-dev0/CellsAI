@@ -6,9 +6,9 @@ namespace CellsAI.Entities.Creatures
 {
 	public class Brain
 	{
-		private List<IReceptor> _receptors;
-		private List<IEffector> _effectors;
-		private NeuralNetwork _network;
+		private readonly List<IReceptor> _receptors;
+		private readonly List<IEffector> _effectors;
+		private readonly NeuralNetwork _network;
 
 		public Brain(List<IReceptor> receptors, List<IEffector> effectors, NeuralNetwork network = null)
 		{
@@ -30,9 +30,9 @@ namespace CellsAI.Entities.Creatures
 
 				// SimpleNetwork
 				var hidden = new List<int>();
-				for (int i = 0; i < r.Next(1, 5); i++)
-					hidden.Add(r.Next(2, 12));
-				var newNetwork = new SimpleNetwork(inputCount, outputCount, ActivationFunctions.GetRandom(), hidden.ToArray());
+				for (int i = 0; i < r.Next(1, 4); i++)
+					hidden.Add(r.Next(2, 6));
+				var newNetwork = new SimpleNetwork(inputCount, outputCount, ActivationFunctions.BinaryStep, hidden.ToArray());
 				for (int i = 0; i < hidden.Count * 3; i++)
 					newNetwork.Id += "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[r.Next(62)];
 

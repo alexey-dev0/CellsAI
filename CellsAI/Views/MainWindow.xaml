@@ -9,19 +9,18 @@
 		mc:Ignorable="d"
 		Title="MainWindow"
 		Height="450"
-		Width="800">
+		Width="800" Background="#FF3E3E3E" Foreground="#FFE8E8E8">
 	<Grid x:Name="MyGrid" Margin="5">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="0.7*" />
-			<ColumnDefinition Width="0.3*" />
+			<ColumnDefinition Width="0.8*" />
+			<ColumnDefinition Width="0.2*" />
 		</Grid.ColumnDefinitions>
 
 		<game:MyGame x:Name="GameMain" Grid.Column="0" />
 
 		<StackPanel x:Name="StackPnl" Grid.Column="1">
-			<Button x:Name="Reset" Height="40" Click="Reset_Click" Margin="10">Reset</Button>
-			<CheckBox x:Name="DrawSwitch" IsChecked="True" Margin="10">Enable drawing</CheckBox>
-			<TextBlock x:Name="DebugInfo" Margin="10" Background="LightYellow">Debug</TextBlock>
+			<CheckBox x:Name="DrawSwitch" IsChecked="True" Margin="10" Foreground="#FFE8E8E8" Background="#FF3E3E3E">Enable drawing</CheckBox>
+			<TextBlock x:Name="DebugInfo" Margin="10" Background="#FF686868">Debug</TextBlock>
 		</StackPanel>
 	</Grid>
 </Window>

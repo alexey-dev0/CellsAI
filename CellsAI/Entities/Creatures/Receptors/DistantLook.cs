@@ -4,13 +4,13 @@ using static CellsAI.Game.GameParameters;
 
 namespace CellsAI.Entities.Creatures.Receptors
 {
-	public class StraightLook : IReceptor
+	internal class DistantLook : IReceptor
 	{
-		private const int VISIBILITY = 6;
+		private const int VISIBILITY = 16;
 
-		public StraightLook(Creature creature) : base(creature)
+		public DistantLook(Creature creature) : base(creature)
 		{
-			Values = new List<double>() { 0, 0, 0, 0, 0, 0 };
+			Values = new List<double>() { 0, 0 };
 		}
 
 		public override void Receive()
@@ -20,8 +20,7 @@ namespace CellsAI.Entities.Creatures.Receptors
 			int vx = _creature.X;
 			int vy = _creature.Y;
 
-			Values[0] = Values[1] = Values[2] = Values[3] = Values[4] = Values[5] = 0.0;
-			Values[2 + (int)GAME.World[vx + dx, vy + dy].MyType] = 1.0;
+			Values[0] = Values[1] = 0.0;
 
 			for (int i = 0; i < VISIBILITY; i++)
 			{
